@@ -2,7 +2,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { Express, NextFunction, Request, Response } from 'express';
 import authRoutes from './routes/auth';
-import apiRoutes from './routes/api';
+import dbRoutes from './routes/db/db';
 import { JSend } from './shared/jsend';
 
 // dotenv config
@@ -31,7 +31,7 @@ app.get("/", (req: Request, res: Response) => {
     res.send("It works!");
 });
 app.use('/auth', authRoutes);
-app.use('/api', apiRoutes);
+app.use('/db', dbRoutes);
 
 // Listen
 const port = process.env.PORT || 8080;

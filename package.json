@@ -6,7 +6,10 @@
   "scripts": {
     "build": "npx tsc",
     "start": "nodemon src/index.ts",
-    "prisma-pull": "prisma db pull && prisma generate"
+    "prisma-pull": "prisma db pull && prisma generate",
+    "routes-generator": "ts-node src/scripts/routes-generator.ts src/routes/db/auto",
+    "types-generator": "ts-node src/scripts/types-generator.ts ../lba/src/app/shared/types/db/auto",
+    "refresh-persistent": "npm run prisma-pull && npm run routes-generator && npm run types-generator"
   },
   "keywords": [],
   "author": "",
