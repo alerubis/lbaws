@@ -1,0 +1,61 @@
+import { PrismaClient } from '@prisma/client';
+import express from 'express';
+import { authenticateToken } from '../../../shared/auth';
+import { wrapAsync } from '../../../shared/functions';
+import { JSend } from '../../../shared/jsend';
+
+const prisma = new PrismaClient();
+
+const router = express.Router();
+router.use(authenticateToken());
+
+router.post('/create', wrapAsync(async (req: any, res: any) => {
+    const createdRow = await prisma.$transaction(async (tx) => {
+        const data = {
+            ...req.body,
+            user_id: req.user.id,
+        }
+        const createdRow = await tx.dashboard_card.create({ data: data });
+        return createdRow;
+    });
+    res.status(200).json(JSend.success(createdRow));
+}));
+
+router.post('/read', wrapAsync(async (req: any, res: any) => {
+    const response = await prisma.$transaction(async (tx) => {
+        const where = {
+            ...req.body?.where,
+            user_id: req.user.id,
+        }
+        const rows = await tx.dashboard_card.findMany({
+            skip: req.body?.skip,
+            take: req.body?.take || 1,
+            where: where,
+            orderBy: req.body?.orderBy || { id: 'desc' },
+        });
+        const count = await tx.dashboard_card.count({ where: req.body?.where });
+        return {
+            rows: rows,
+            count: count,
+        };
+    });
+    res.status(200).json(JSend.success(response));
+}));
+
+router.post('/update', wrapAsync(async (req: any, res: any) => {
+    const updatedRow = await prisma.$transaction(async (tx) => {
+        const updatedRow = await tx.dashboard_card.update({ where: { id: req.body.id, user_id: req.user.id }, data: req.body });
+        return updatedRow;
+    });
+    res.status(200).json(JSend.success(updatedRow));
+}));
+
+router.post('/delete', wrapAsync(async (req: any, res: any) => {
+    const deletedRow = await prisma.$transaction(async (tx) => {
+        const deletedRow = await tx.dashboard_card.delete({ where: { id: req.body.id, user_id: req.user.id } });
+        return deletedRow;
+    });
+    res.status(200).json(JSend.success(deletedRow));
+}));
+
+export default router;

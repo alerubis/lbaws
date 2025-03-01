@@ -8,17 +8,51 @@ datasource db {
 }
 
 model dashboard {
-  id          Int     @id @default(autoincrement())
-  user_id     Int
-  description String? @db.Text
-  user        user    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_user_id")
+  id             Int              @id @default(autoincrement())
+  user_id        Int
+  description    String?          @db.Text
+  user           user             @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_user_id")
+  dashboard_card dashboard_card[]
 
   @@index([user_id], map: "dashboard_user_id")
 }
 
 model user {
-  id        Int         @id @default(autoincrement())
-  username  String      @db.VarChar(64)
-  password  String      @db.VarChar(64)
-  dashboard dashboard[]
+  id             Int              @id @default(autoincrement())
+  username       String           @db.VarChar(64)
+  password       String           @db.VarChar(64)
+  dashboard      dashboard[]
+  dashboard_card dashboard_card[]
+}
+
+model card {
+  id             Int              @id @default(autoincrement())
+  card_type_id   String           @db.VarChar(64)
+  description    String?          @db.Text
+  card_type      card_type        @relation(fields: [card_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "card_card_type_id")
+  dashboard_card dashboard_card[]
+
+  @@index([card_type_id], map: "card_card_type_id")
+}
+
+model card_type {
+  id          String  @id @db.VarChar(64)
+  description String? @db.Text
+  card        card[]
+}
+
+model dashboard_card {
+  id           Int       @id @default(autoincrement())
+  user_id      Int
+  dashboard_id Int
+  card_id      Int
+  x            Int?
+  y            Int?
+  card         card      @relation(fields: [card_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_card_id")
+  dashboard    dashboard @relation(fields: [dashboard_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_dashboard_id")
+  user         user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_user_id")
+
+  @@index([card_id], map: "dashboard_card_card_id")
+  @@index([dashboard_id], map: "dashboard_card_dashboard_id")
+  @@index([user_id], map: "dashboard_card_user_id")
 }
