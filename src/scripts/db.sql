@@ -48,3 +48,11 @@ CREATE TABLE `dashboard_card` (
 
 INSERT INTO user (`username`, `password`) VALUES('ale', 'ale');
 INSERT INTO user (`username`, `password`) VALUES('test', 'test');
+
+INSERT INTO card_type (`id`, `description`) VALUES('RADAR', 'Radar Chart');
+
+INSERT INTO card (`card_type_id`, `description`, `default_settings`)
+VALUES('RADAR', 'Radar Chart Attack', '{"names": ["Attack", "Speed", "Shooting", "Ball Handling", "Finishing"], "values": [90, 80, 70, 60, 50]}');
+
+INSERT INTO card (`card_type_id`, `description`, `default_settings`)
+VALUES('RADAR', 'Radar Chart Defense', '{"names": ["Defense", "Endurance", "Rebounding", "Shot Blocking"], "values": [90, 80, 70, 60]}');

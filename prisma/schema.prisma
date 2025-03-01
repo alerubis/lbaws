@@ -26,11 +26,12 @@ model user {
 }
 
 model card {
-  id             Int              @id @default(autoincrement())
-  card_type_id   String           @db.VarChar(64)
-  description    String?          @db.Text
-  card_type      card_type        @relation(fields: [card_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "card_card_type_id")
-  dashboard_card dashboard_card[]
+  id               Int              @id @default(autoincrement())
+  card_type_id     String           @db.VarChar(64)
+  description      String?          @db.Text
+  default_settings Json?
+  card_type        card_type        @relation(fields: [card_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "card_card_type_id")
+  dashboard_card   dashboard_card[]
 
   @@index([card_type_id], map: "card_card_type_id")
 }
@@ -48,6 +49,9 @@ model dashboard_card {
   card_id      Int
   x            Int?
   y            Int?
+  width        Int?
+  height       Int?
+  settings     Json?
   card         card      @relation(fields: [card_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_card_id")
   dashboard    dashboard @relation(fields: [dashboard_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_dashboard_id")
   user         user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_user_id")
