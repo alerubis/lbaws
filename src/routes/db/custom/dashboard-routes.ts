@@ -13,7 +13,7 @@ router.post('/create', wrapAsync(async (req: any, res: any) => {
     const createdRow = await prisma.$transaction(async (tx) => {
         const data = {
             ...req.body,
-            user_id: req.user.id,
+            team_id: req.user.team_id,
         }
         const createdRow = await tx.dashboard.create({ data: data });
         return createdRow;
@@ -25,7 +25,7 @@ router.post('/read', wrapAsync(async (req: any, res: any) => {
     const response = await prisma.$transaction(async (tx) => {
         const where = {
             ...req.body?.where,
-            user_id: req.user.id,
+            team_id: req.user.team_id,
         }
         const rows = await tx.dashboard.findMany({
             skip: req.body?.skip,
@@ -44,7 +44,7 @@ router.post('/read', wrapAsync(async (req: any, res: any) => {
 
 router.post('/update', wrapAsync(async (req: any, res: any) => {
     const updatedRow = await prisma.$transaction(async (tx) => {
-        const updatedRow = await tx.dashboard.update({ where: { id: req.body.id, user_id: req.user.id }, data: req.body });
+        const updatedRow = await tx.dashboard.update({ where: { id: req.body.id, team_id: req.user.team_id }, data: req.body });
         return updatedRow;
     });
     res.status(200).json(JSend.success(updatedRow));
@@ -52,7 +52,7 @@ router.post('/update', wrapAsync(async (req: any, res: any) => {
 
 router.post('/delete', wrapAsync(async (req: any, res: any) => {
     const deletedRow = await prisma.$transaction(async (tx) => {
-        const deletedRow = await tx.dashboard.delete({ where: { id: req.body.id, user_id: req.user.id } });
+        const deletedRow = await tx.dashboard.delete({ where: { id: req.body.id, team_id: req.user.team_id } });
         return deletedRow;
     });
     res.status(200).json(JSend.success(deletedRow));

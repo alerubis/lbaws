@@ -35,7 +35,7 @@ router.post("/login", wrapAsync(async (req: any, res: any) => {
         return;
     }
 
-    const token = getToken(user.id, user.username);
+    const token = getToken(user.id, user.username, user.team_id);
     res.status(200).json(JSend.success({ token: token, user: user }));
 
 }));

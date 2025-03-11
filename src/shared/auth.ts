@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { JSend } from "./jsend";
 
-export function getToken(id: number, username: string) {
+export function getToken(id: number, username: string, team_id: number) {
     const secret = process.env.SECRET!;
-    return jwt.sign({ 'id': id, 'username': username }, secret);
+    return jwt.sign({ 'id': id, 'username': username, 'team_id': team_id }, secret);
 };
 
 export function authenticateToken() {

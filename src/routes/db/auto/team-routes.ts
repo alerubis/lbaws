@@ -11,11 +11,7 @@ router.use(authenticateToken());
 
 router.post('/create', wrapAsync(async (req: any, res: any) => {
     const createdRow = await prisma.$transaction(async (tx) => {
-        const data = {
-            ...req.body,
-            team_id: req.user.team_id,
-        }
-        const createdRow = await tx.dashboard_card.create({ data: data });
+        const createdRow = await tx.team.create({ data: req.body });
         return createdRow;
     });
     res.status(200).json(JSend.success(createdRow));
@@ -23,17 +19,13 @@ router.post('/create', wrapAsync(async (req: any, res: any) => {
 
 router.post('/read', wrapAsync(async (req: any, res: any) => {
     const response = await prisma.$transaction(async (tx) => {
-        const where = {
-            ...req.body?.where,
-            team_id: req.user.team_id,
-        }
-        const rows = await tx.dashboard_card.findMany({
+        const rows = await tx.team.findMany({
             skip: req.body?.skip,
             take: req.body?.take || 1,
-            where: where,
+            where: req.body?.where,
             orderBy: req.body?.orderBy || { id: 'desc' },
         });
-        const count = await tx.dashboard_card.count({ where: req.body?.where });
+        const count = await tx.team.count({ where: req.body?.where });
         return {
             rows: rows,
             count: count,
@@ -44,7 +36,7 @@ router.post('/read', wrapAsync(async (req: any, res: any) => {
 
 router.post('/update', wrapAsync(async (req: any, res: any) => {
     const updatedRow = await prisma.$transaction(async (tx) => {
-        const updatedRow = await tx.dashboard_card.update({ where: { id: req.body.id, team_id: req.user.team_id }, data: req.body });
+        const updatedRow = await tx.team.update({ where: { id: req.body.id }, data: req.body });
         return updatedRow;
     });
     res.status(200).json(JSend.success(updatedRow));
@@ -52,7 +44,7 @@ router.post('/update', wrapAsync(async (req: any, res: any) => {
 
 router.post('/delete', wrapAsync(async (req: any, res: any) => {
     const deletedRow = await prisma.$transaction(async (tx) => {
-        const deletedRow = await tx.dashboard_card.delete({ where: { id: req.body.id, team_id: req.user.team_id } });
+        const deletedRow = await tx.team.delete({ where: { id: req.body.id } });
         return deletedRow;
     });
     res.status(200).json(JSend.success(deletedRow));
