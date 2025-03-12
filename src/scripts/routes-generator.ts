@@ -30,6 +30,7 @@ async function generate(outputFolder: string) {
         classFileContent += `\nrouter.use(authenticateToken());\n`;
 
         // Create route
+        /*
         classFileContent += `\nrouter.post('/create', wrapAsync(async (req: any, res: any) => {\n`;
         classFileContent += `    const createdRow = await prisma.$transaction(async (tx) => {\n`;
         classFileContent += `        const createdRow = await tx.${tableName}.create({ data: req.body });\n`;
@@ -37,6 +38,7 @@ async function generate(outputFolder: string) {
         classFileContent += `    });\n`;
         classFileContent += `    res.status(200).json(JSend.success(createdRow));\n`;
         classFileContent += `}));\n`;
+        */
 
         // Read route
         classFileContent += `\nrouter.post('/read', wrapAsync(async (req: any, res: any) => {\n`;
@@ -45,7 +47,7 @@ async function generate(outputFolder: string) {
         classFileContent += `            skip: req.body?.skip,\n`;
         classFileContent += `            take: req.body?.take || 1,\n`;
         classFileContent += `            where: req.body?.where,\n`;
-        classFileContent += `            orderBy: req.body?.orderBy || { id: 'desc' },\n`;
+        classFileContent += `            orderBy: req.body?.orderBy,\n`;
         classFileContent += `        });\n`;
         classFileContent += `        const count = await tx.${tableName}.count({ where: req.body?.where });\n`;
         classFileContent += `        return {\n`;
@@ -57,6 +59,7 @@ async function generate(outputFolder: string) {
         classFileContent += `}));\n`;
 
         // Update route
+        /*
         classFileContent += `\nrouter.post('/update', wrapAsync(async (req: any, res: any) => {\n`;
         classFileContent += `    const updatedRow = await prisma.$transaction(async (tx) => {\n`;
         classFileContent += `        const updatedRow = await tx.${tableName}.update({ where: { id: req.body.id }, data: req.body });\n`;
@@ -64,8 +67,10 @@ async function generate(outputFolder: string) {
         classFileContent += `    });\n`;
         classFileContent += `    res.status(200).json(JSend.success(updatedRow));\n`;
         classFileContent += `}));\n`;
+        */
 
         // Delete route
+        /*
         classFileContent += `\nrouter.post('/delete', wrapAsync(async (req: any, res: any) => {\n`;
         classFileContent += `    const deletedRow = await prisma.$transaction(async (tx) => {\n`;
         classFileContent += `        const deletedRow = await tx.${tableName}.delete({ where: { id: req.body.id } });\n`;
@@ -73,6 +78,7 @@ async function generate(outputFolder: string) {
         classFileContent += `    });\n`;
         classFileContent += `    res.status(200).json(JSend.success(deletedRow));\n`;
         classFileContent += `}));\n`;
+        */
 
         // Export router
         classFileContent += `\nexport default router;\n`;

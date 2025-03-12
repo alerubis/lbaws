@@ -8,11 +8,12 @@ datasource db {
 }
 
 model dashboard {
-  id             Int              @id @default(autoincrement())
-  team_id        Int
-  description    String?          @db.Text
-  team           team             @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_team_id")
-  dashboard_card dashboard_card[]
+  id                      Int                       @id @default(autoincrement())
+  team_id                 Int
+  description             String?                   @db.Text
+  team                    team                      @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_team_id")
+  dashboard_card          dashboard_card[]
+  dashboard_card_settings dashboard_card_settings[]
 
   @@index([team_id], map: "dashboard_team_id")
 }
@@ -28,39 +29,27 @@ model user {
 }
 
 model card {
-  id               Int              @id @default(autoincrement())
-  card_type_id     String           @db.VarChar(64)
-  description      String?          @db.Text
-  default_settings Json?
-  card_type        card_type        @relation(fields: [card_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "card_card_type_id")
-  dashboard_card   dashboard_card[]
-
-  @@index([card_type_id], map: "card_card_type_id")
-}
-
-model card_type {
-  id          String  @id @db.VarChar(64)
-  description String? @db.Text
-  card        card[]
+  id             String           @id @db.VarChar(64)
+  description    String?          @db.Text
+  view_name      String?          @db.VarChar(64)
+  card_settings  card_settings[]
+  dashboard_card dashboard_card[]
 }
 
 model dashboard_card {
-  id           Int       @id @default(autoincrement())
-  team_id      Int
-  dashboard_id Int
-  card_id      Int
-  x            Int?
-  y            Int?
-  width        Int?
-  height       Int?
-  settings     Json?
-  card         card      @relation(fields: [card_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_card_id")
-  dashboard    dashboard @relation(fields: [dashboard_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_dashboard_id")
-  team         team      @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_team_id")
+  id                      Int                       @id @default(autoincrement())
+  dashboard_id            Int
+  card_id                 String                    @db.VarChar(64)
+  x                       Int?
+  y                       Int?
+  width                   Int?
+  height                  Int?
+  card                    card                      @relation(fields: [card_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_card_id")
+  dashboard               dashboard                 @relation(fields: [dashboard_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_dashboard_id")
+  dashboard_card_settings dashboard_card_settings[]
 
   @@index([card_id], map: "dashboard_card_card_id")
   @@index([dashboard_id], map: "dashboard_card_dashboard_id")
-  @@index([team_id], map: "dashboard_card_team_id")
 }
 
 model dz_foul {
@@ -244,7 +233,6 @@ model team {
   id                            Int                @id @default(autoincrement())
   name                          String             @db.VarChar(64)
   dashboard                     dashboard[]
-  dashboard_card                dashboard_card[]
   game_game_team_guest_idToteam game[]             @relation("game_team_guest_idToteam")
   game_game_team_home_idToteam  game[]             @relation("game_team_home_idToteam")
   player_team                   player_team[]
@@ -319,4 +307,32 @@ model type_sub_play {
   @@index([infraction_id], map: "type_sub_play_infraction_id")
   @@index([shot_id], map: "type_sub_play_shot_id")
   @@index([turnover_id], map: "type_sub_play_turnover_id")
+}
+
+model card_settings {
+  card_id                 String                    @db.VarChar(64)
+  setting_id              String                    @db.VarChar(64)
+  description             String?                   @db.Text
+  view_column             String?                   @db.VarChar(64)
+  default_value           Json?
+  possible_values         Json?
+  card                    card                      @relation(fields: [card_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "card_settings_card_id")
+  dashboard_card_settings dashboard_card_settings[]
+
+  @@id([card_id, setting_id])
+}
+
+model dashboard_card_settings {
+  dashboard_id      Int
+  dashboard_card_id Int
+  card_id           String         @db.VarChar(64)
+  setting_id        String         @db.VarChar(64)
+  value             Json?
+  card_settings     card_settings  @relation(fields: [card_id, setting_id], references: [card_id, setting_id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_settings_card_settings")
+  dashboard_card    dashboard_card @relation(fields: [dashboard_card_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_settings_dashboard_card_id")
+  dashboard         dashboard      @relation(fields: [dashboard_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_settings_dashboard_id")
+
+  @@id([dashboard_id, dashboard_card_id, card_id, setting_id])
+  @@index([card_id, setting_id], map: "dashboard_card_settings_card_settings")
+  @@index([dashboard_card_id], map: "dashboard_card_settings_dashboard_card_id")
 }

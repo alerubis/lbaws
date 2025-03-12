@@ -9,21 +9,13 @@ const prisma = new PrismaClient();
 const router = express.Router();
 router.use(authenticateToken());
 
-router.post('/create', wrapAsync(async (req: any, res: any) => {
-    const createdRow = await prisma.$transaction(async (tx) => {
-        const createdRow = await tx.referee.create({ data: req.body });
-        return createdRow;
-    });
-    res.status(200).json(JSend.success(createdRow));
-}));
-
 router.post('/read', wrapAsync(async (req: any, res: any) => {
     const response = await prisma.$transaction(async (tx) => {
         const rows = await tx.referee.findMany({
             skip: req.body?.skip,
             take: req.body?.take || 1,
             where: req.body?.where,
-            orderBy: req.body?.orderBy || { id: 'desc' },
+            orderBy: req.body?.orderBy,
         });
         const count = await tx.referee.count({ where: req.body?.where });
         return {
@@ -32,22 +24,6 @@ router.post('/read', wrapAsync(async (req: any, res: any) => {
         };
     });
     res.status(200).json(JSend.success(response));
-}));
-
-router.post('/update', wrapAsync(async (req: any, res: any) => {
-    const updatedRow = await prisma.$transaction(async (tx) => {
-        const updatedRow = await tx.referee.update({ where: { id: req.body.id }, data: req.body });
-        return updatedRow;
-    });
-    res.status(200).json(JSend.success(updatedRow));
-}));
-
-router.post('/delete', wrapAsync(async (req: any, res: any) => {
-    const deletedRow = await prisma.$transaction(async (tx) => {
-        const deletedRow = await tx.referee.delete({ where: { id: req.body.id } });
-        return deletedRow;
-    });
-    res.status(200).json(JSend.success(deletedRow));
 }));
 
 export default router;

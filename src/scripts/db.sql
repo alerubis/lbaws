@@ -1,5 +1,11 @@
+-- =============================================
+-- 1. DB creation
+-- =============================================
+
 CREATE DATABASE `lba` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
 use lba;
+
 CREATE TABLE `team` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL,
@@ -104,35 +110,47 @@ CREATE TABLE `dashboard` (
   CONSTRAINT `dashboard_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`)
 );
 
-CREATE TABLE `card_type` (
+CREATE TABLE `card` (
   `id` varchar(64) NOT NULL,
   `description` text,
+  `view_name` varchar(64),
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `card` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `card_type_id` varchar(64) NOT NULL,
+CREATE TABLE `card_settings` (
+  `card_id` varchar(64) NOT NULL,
+  `setting_id` varchar(64) NOT NULL,
   `description` text,
-  `default_settings` json,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `card_card_type_id` FOREIGN KEY (`card_type_id`) REFERENCES `card_type` (`id`)
+  `view_column` varchar(64),
+  `default_value` json,
+  `possible_values` json,
+  PRIMARY KEY (`card_id`, `setting_id`),
+  CONSTRAINT `card_settings_card_id` FOREIGN KEY (`card_id`) REFERENCES `card` (`id`)
 );
 
 CREATE TABLE `dashboard_card` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `team_id` int NOT NULL,
   `dashboard_id` int NOT NULL,
-  `card_id` int NOT NULL,
+  `card_id` varchar(64) NOT NULL,
   `x` int,
   `y` int,
   `width` int,
   `height` int,
-  `settings` json,
   PRIMARY KEY (`id`),
-  CONSTRAINT `dashboard_card_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`),
   CONSTRAINT `dashboard_card_dashboard_id` FOREIGN KEY (`dashboard_id`) REFERENCES `dashboard` (`id`),
   CONSTRAINT `dashboard_card_card_id` FOREIGN KEY (`card_id`) REFERENCES `card` (`id`)
+);
+
+CREATE TABLE `dashboard_card_settings` (
+  `dashboard_id` int NOT NULL,
+  `dashboard_card_id` int NOT NULL,
+  `card_id` varchar(64) NOT NULL,
+  `setting_id` varchar(64) NOT NULL,
+  `value` json,
+  PRIMARY KEY (`dashboard_id`, `dashboard_card_id`, `card_id`, `setting_id`),
+  CONSTRAINT `dashboard_card_settings_dashboard_id` FOREIGN KEY (`dashboard_id`) REFERENCES `dashboard` (`id`),
+  CONSTRAINT `dashboard_card_settings_dashboard_card_id` FOREIGN KEY (`dashboard_card_id`) REFERENCES `dashboard_card` (`id`),
+  CONSTRAINT `dashboard_card_settings_card_settings` FOREIGN KEY (`card_id`, `setting_id`) REFERENCES `card_settings` (`card_id`, `setting_id`)
 );
 
 CREATE TABLE `player_team` (
@@ -255,6 +273,22 @@ CREATE TABLE `sub_play` (
   CONSTRAINT `sub_play_play_id` FOREIGN KEY (`play_id`) REFERENCES `play` (`id`)
 );
 
+
+
+
+
+
+-- =============================================
+-- 2. DATA POPULATION
+-- =============================================
+
+INSERT INTO card (id, description, view_name) VALUES('AREA', 'Area chart', 'v_area');
+
+INSERT INTO card_settings (card_id, setting_id, description, view_column, default_value, possible_values) VALUES('AREA', 'X', 'Asse X', 'asse_x', '"PLAY"', '["PLAY", "QUARTER", "GAME"]');
+INSERT INTO card_settings (card_id, setting_id, description, view_column, default_value, possible_values) VALUES('AREA', 'Y', 'Asse Y', 'asse_y', '"%2"', '["%2", "%3"]');
+
+
+
 -- Popolamento tabella `team` con le squadre della Serie A
 INSERT INTO `team` (`name`) VALUES
 ('EA7 Emporio Armani Milano'),
@@ -302,7 +336,7 @@ INSERT INTO `trainer` (`name`, `surname`) VALUES
 
 -- Popolamento tabella `trainer_team`
 INSERT INTO `trainer_team` (`trainer_id`, `team_id`, `date_start_utc`, `date_end_utc`)
-SELECT t.id, tm.id, 1704067200, NULL 
+SELECT t.id, tm.id, 1704067200, NULL
 FROM trainer t JOIN team tm ON t.id = tm.id;
 
 -- Popolamento tabella `player` con 6-7 giocatori per squadra
@@ -345,14 +379,6 @@ FROM player p JOIN team t ON p.id % 16 = t.id - 1;
 INSERT INTO user (`username`, `password`, `team_id`) VALUES('ale', 'ale', 1);
 INSERT INTO user (`username`, `password`, `team_id`) VALUES('test', 'test', 1);
 
-INSERT INTO card_type (`id`, `description`) VALUES('RADAR', 'Radar Chart');
-
-INSERT INTO card (`card_type_id`, `description`, `default_settings`)
-VALUES('RADAR', 'Radar Chart Attack', '{"names": ["Attack", "Speed", "Shooting", "Ball Handling", "Finishing"], "values": [90, 80, 70, 60, 50]}');
-
-INSERT INTO card (`card_type_id`, `description`, `default_settings`)
-VALUES('RADAR', 'Radar Chart Defense', '{"names": ["Defense", "Endurance", "Rebounding", "Shot Blocking"], "values": [90, 80, 70, 60]}');
-
 -- Inserimento nella tabella `type_league`
 INSERT INTO `type_league` (`description`) VALUES ('Campionato Nazionale');
 
@@ -360,7 +386,7 @@ INSERT INTO `type_league` (`description`) VALUES ('Campionato Nazionale');
 SET @type_league_id = LAST_INSERT_ID();
 
 -- Inserimento nella tabella `league`
-INSERT INTO `league` (`name`, `description`, `type_league_id`) 
+INSERT INTO `league` (`name`, `description`, `type_league_id`)
 VALUES ('LBA', 'Lega Basket Serie A', @type_league_id);
 
 -- Recupero dell'ID della `league` inserita
@@ -373,11 +399,11 @@ INSERT INTO `type_game` (`description`) VALUES ('Regular Season');
 SET @type_game_id = LAST_INSERT_ID();
 
 -- Associazione `type_league` e `type_game`
-INSERT INTO `type_league_type_game` (`type_league_id`, `type_game_id`) 
+INSERT INTO `type_league_type_game` (`type_league_id`, `type_game_id`)
 VALUES (@type_league_id, @type_game_id);
 
 -- Inserimento nella tabella `league_year`
-INSERT INTO `league_year` (`league_id`, `date_start_utc`, `date_end_utc`) 
+INSERT INTO `league_year` (`league_id`, `date_start_utc`, `date_end_utc`)
 VALUES (@league_id, UNIX_TIMESTAMP(STR_TO_DATE('01-09-2024', '%d-%m-%Y')), UNIX_TIMESTAMP(STR_TO_DATE('30-06-2025', '%d-%m-%Y')));
 
 -- Dizionario dei tiri
@@ -414,5 +440,5 @@ INSERT INTO `dz_turnover` (`description`) VALUES
 ('Violazione di tempo');
 
 -- Creazione della partita (Esempio: Milano vs Bologna)
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`) 
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)
 VALUES (1, 1, 1, 2, UNIX_TIMESTAMP(STR_TO_DATE('10-03-2025 20:30', '%d-%m-%Y %H:%i')), 1, 2, 3);
