@@ -7,9 +7,9 @@ CREATE DATABASE `lba` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_090
 use lba;
 
 CREATE TABLE `team` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `team_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`team_id`)
 );
 
 CREATE TABLE `user` (
@@ -18,7 +18,7 @@ CREATE TABLE `user` (
   `password` varchar(64) NOT NULL,
   `team_id` int NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `user_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`)
+  CONSTRAINT `user_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`)
 );
 
 CREATE TABLE `referee` (
@@ -95,50 +95,49 @@ CREATE TABLE `game` (
   PRIMARY KEY (`id`),
   CONSTRAINT `game_league_year_id` FOREIGN KEY (`league_year_id`) REFERENCES `league_year` (`id`),
   CONSTRAINT `game_type_game_id` FOREIGN KEY (`type_game_id`) REFERENCES `type_game` (`id`),
-  CONSTRAINT `game_team_home_id` FOREIGN KEY (`team_home_id`) REFERENCES `team` (`id`),
-  CONSTRAINT `game_team_guest_id` FOREIGN KEY (`team_guest_id`) REFERENCES `team` (`id`),
+  CONSTRAINT `game_team_home_id` FOREIGN KEY (`team_home_id`) REFERENCES `team` (`team_id`),
+  CONSTRAINT `game_team_guest_id` FOREIGN KEY (`team_guest_id`) REFERENCES `team` (`team_id`),
   CONSTRAINT `game_referee_1_id` FOREIGN KEY (`referee_1_id`) REFERENCES `referee` (`id`),
   CONSTRAINT `game_referee_2_id` FOREIGN KEY (`referee_2_id`) REFERENCES `referee` (`id`),
   CONSTRAINT `game_referee_3_id` FOREIGN KEY (`referee_3_id`) REFERENCES `referee` (`id`)
 );
 
-CREATE TABLE `dashboard` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `team_id` int NOT NULL,
-  `description` text,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `dashboard_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`)
-);
-
 CREATE TABLE `card` (
-  `id` varchar(64) NOT NULL,
+  `card_id` varchar(64) NOT NULL,
   `description` text,
-  `view_name` varchar(64),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`card_id`)
 );
 
 CREATE TABLE `card_settings` (
   `card_id` varchar(64) NOT NULL,
   `setting_id` varchar(64) NOT NULL,
   `description` text,
-  `view_column` varchar(64),
   `default_value` json,
   `possible_values` json,
   PRIMARY KEY (`card_id`, `setting_id`),
-  CONSTRAINT `card_settings_card_id` FOREIGN KEY (`card_id`) REFERENCES `card` (`id`)
+  CONSTRAINT `card_settings_card_id` FOREIGN KEY (`card_id`) REFERENCES `card` (`card_id`)
+);
+
+CREATE TABLE `dashboard` (
+  `dashboard_id` int NOT NULL AUTO_INCREMENT,
+  `team_id` int NOT NULL,
+  `description` text,
+  PRIMARY KEY (`dashboard_id`),
+  CONSTRAINT `dashboard_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`)
 );
 
 CREATE TABLE `dashboard_card` (
-  `id` int NOT NULL AUTO_INCREMENT,
   `dashboard_id` int NOT NULL,
+  `dashboard_card_id` int NOT NULL,
   `card_id` varchar(64) NOT NULL,
+  `title` text,
   `x` int,
   `y` int,
   `width` int,
   `height` int,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `dashboard_card_dashboard_id` FOREIGN KEY (`dashboard_id`) REFERENCES `dashboard` (`id`),
-  CONSTRAINT `dashboard_card_card_id` FOREIGN KEY (`card_id`) REFERENCES `card` (`id`)
+  PRIMARY KEY (`dashboard_id`, `dashboard_card_id`),
+  CONSTRAINT `dashboard_card_dashboard_id` FOREIGN KEY (`dashboard_id`) REFERENCES `dashboard` (`dashboard_id`),
+  CONSTRAINT `dashboard_card_card_id` FOREIGN KEY (`card_id`) REFERENCES `card` (`card_id`)
 );
 
 CREATE TABLE `dashboard_card_settings` (
@@ -148,8 +147,7 @@ CREATE TABLE `dashboard_card_settings` (
   `setting_id` varchar(64) NOT NULL,
   `value` json,
   PRIMARY KEY (`dashboard_id`, `dashboard_card_id`, `card_id`, `setting_id`),
-  CONSTRAINT `dashboard_card_settings_dashboard_id` FOREIGN KEY (`dashboard_id`) REFERENCES `dashboard` (`id`),
-  CONSTRAINT `dashboard_card_settings_dashboard_card_id` FOREIGN KEY (`dashboard_card_id`) REFERENCES `dashboard_card` (`id`),
+  CONSTRAINT `dashboard_card_settings_dashboard_card` FOREIGN KEY (`dashboard_id`, `dashboard_card_id`) REFERENCES `dashboard_card` (`dashboard_id`, `dashboard_card_id`),
   CONSTRAINT `dashboard_card_settings_card_settings` FOREIGN KEY (`card_id`, `setting_id`) REFERENCES `card_settings` (`card_id`, `setting_id`)
 );
 
@@ -161,7 +159,7 @@ CREATE TABLE `player_team` (
   `date_end_utc` bigint,
   PRIMARY KEY (`player_id`, `team_id`),
   CONSTRAINT `player_team_player_id` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`),
-  CONSTRAINT `player_team_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`)
+  CONSTRAINT `player_team_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`)
 );
 
 CREATE TABLE `trainer_team` (
@@ -171,7 +169,7 @@ CREATE TABLE `trainer_team` (
   `date_end_utc` bigint,
   PRIMARY KEY (`trainer_id`, `team_id`),
   CONSTRAINT `trainer_team_trainer_id` FOREIGN KEY (`trainer_id`) REFERENCES `trainer` (`id`),
-  CONSTRAINT `trainer_team_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`)
+  CONSTRAINT `trainer_team_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`)
 );
 
 CREATE TABLE `play` (
@@ -193,7 +191,7 @@ CREATE TABLE `player_team_game` (
   `game_id` int NOT NULL,
   PRIMARY KEY (`player_id`, `team_id`, `game_id`),
   CONSTRAINT `player_team_game_player_id` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`),
-  CONSTRAINT `player_team_game_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`),
+  CONSTRAINT `player_team_game_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`),
   CONSTRAINT `player_team_game_game_id` FOREIGN KEY (`game_id`) REFERENCES `game` (`id`)
 );
 
@@ -282,10 +280,10 @@ CREATE TABLE `sub_play` (
 -- 2. DATA POPULATION
 -- =============================================
 
-INSERT INTO card (id, description, view_name) VALUES('AREA', 'Area chart', 'v_area');
+INSERT INTO card (card_id, description) VALUES('AREA', 'Area chart');
 
-INSERT INTO card_settings (card_id, setting_id, description, view_column, default_value, possible_values) VALUES('AREA', 'X', 'Asse X', 'asse_x', '"PLAY"', '["PLAY", "QUARTER", "GAME"]');
-INSERT INTO card_settings (card_id, setting_id, description, view_column, default_value, possible_values) VALUES('AREA', 'Y', 'Asse Y', 'asse_y', '"%2"', '["%2", "%3"]');
+INSERT INTO card_settings (card_id, setting_id, description, default_value, possible_values) VALUES('AREA', 'X', 'Asse X', '"PLAY"', '["PLAY", "QUARTER", "GAME"]');
+INSERT INTO card_settings (card_id, setting_id, description, default_value, possible_values) VALUES('AREA', 'Y', 'Asse Y', '"%2"', '["%2", "%3"]');
 
 
 
@@ -336,8 +334,8 @@ INSERT INTO `trainer` (`name`, `surname`) VALUES
 
 -- Popolamento tabella `trainer_team`
 INSERT INTO `trainer_team` (`trainer_id`, `team_id`, `date_start_utc`, `date_end_utc`)
-SELECT t.id, tm.id, 1704067200, NULL
-FROM trainer t JOIN team tm ON t.id = tm.id;
+SELECT t.id, tm.team_id, 1704067200, NULL
+FROM trainer t JOIN team tm ON t.id = tm.team_id;
 
 -- Popolamento tabella `player` con 6-7 giocatori per squadra
 INSERT INTO `player` (`name`, `surname`, `height`, `year`) VALUES
@@ -373,8 +371,8 @@ INSERT INTO `player` (`name`, `surname`, `height`, `year`) VALUES
 
 -- Popolamento tabella `player_team` per assegnare i giocatori alle squadre
 INSERT INTO `player_team` (`player_id`, `team_id`, `number`, `date_start_utc`, `date_end_utc`)
-SELECT p.id, t.id, ROW_NUMBER() OVER (PARTITION BY t.id ORDER BY p.id) + 4, 1704067200, NULL
-FROM player p JOIN team t ON p.id % 16 = t.id - 1;
+SELECT p.id, t.team_id, ROW_NUMBER() OVER (PARTITION BY t.team_id ORDER BY p.id) + 4, 1704067200, NULL
+FROM player p JOIN team t ON p.id % 16 = t.team_id - 1;
 
 INSERT INTO user (`username`, `password`, `team_id`) VALUES('ale', 'ale', 1);
 INSERT INTO user (`username`, `password`, `team_id`) VALUES('test', 'test', 1);

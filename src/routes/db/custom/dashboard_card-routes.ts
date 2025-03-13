@@ -10,14 +10,29 @@ const router = express.Router();
 router.use(authenticateToken());
 
 router.post('/create', wrapAsync(async (req: any, res: any) => {
-    const createdRow = await prisma.$transaction(async (tx) => {
+    const response = await prisma.$transaction(async (tx) => {
+        const card = await tx.card.findUnique({ where: { card_id: req.body.card_id } });
         const data = {
             ...req.body,
+            title: card?.description,
+            dashboard_card_id: 1,
+        };
+        const dashboardCard = await tx.dashboard_card.create({ data: data });
+        const cardSettings = await tx.card_settings.findMany({ where: { card_id: dashboardCard.card_id } });
+        for (const cardSetting of cardSettings) {
+            await tx.dashboard_card_settings.create({
+                data: {
+                    dashboard_id: dashboardCard.dashboard_id,
+                    dashboard_card_id: dashboardCard.dashboard_card_id,
+                    card_id: dashboardCard.card_id,
+                    setting_id: cardSetting.setting_id,
+                    value: cardSetting.default_value as any,
+                },
+            });
         }
-        const createdRow = await tx.dashboard_card.create({ data: data });
-        return createdRow;
+        return dashboardCard;
     });
-    res.status(200).json(JSend.success(createdRow));
+    res.status(200).json(JSend.success(response));
 }));
 
 router.post('/read', wrapAsync(async (req: any, res: any) => {
@@ -29,7 +44,7 @@ router.post('/read', wrapAsync(async (req: any, res: any) => {
             skip: req.body?.skip,
             take: req.body?.take || 1,
             where: where,
-            orderBy: req.body?.orderBy || { id: 'desc' },
+            orderBy: req.body?.orderBy,
         });
         const count = await tx.dashboard_card.count({ where: req.body?.where });
         return {
@@ -41,19 +56,48 @@ router.post('/read', wrapAsync(async (req: any, res: any) => {
 }));
 
 router.post('/update', wrapAsync(async (req: any, res: any) => {
-    const updatedRow = await prisma.$transaction(async (tx) => {
-        const updatedRow = await tx.dashboard_card.update({ where: { id: req.body.id }, data: req.body });
-        return updatedRow;
+    const response = await prisma.$transaction(async (tx) => {
+        const keys = {
+            dashboard_id: req.body.dashboard_id,
+            dashboard_card_id: req.body.dashboard_card_id,
+        };
+        const dashboardCard = await tx.dashboard_card.update({ where: { dashboard_id_dashboard_card_id: keys }, data: { title: req.body.title } });
+        const dashboardCardSettings = req.body.dashboard_card_settings;
+        if (dashboardCardSettings) {
+            for (const setting of dashboardCardSettings) {
+                if (setting.setting_id) {
+                    await tx.dashboard_card_settings.update({
+                        where: {
+                            dashboard_id_dashboard_card_id_card_id_setting_id: {
+                                dashboard_id: dashboardCard.dashboard_id,
+                                dashboard_card_id: dashboardCard.dashboard_card_id,
+                                card_id: dashboardCard.card_id,
+                                setting_id: setting.setting_id,
+                            }
+                        },
+                        data: {
+                            value: setting.value,
+                        },
+                    });
+                }
+            }
+        }
+        return dashboardCard;
     });
-    res.status(200).json(JSend.success(updatedRow));
+    res.status(200).json(JSend.success(response));
 }));
 
 router.post('/delete', wrapAsync(async (req: any, res: any) => {
-    const deletedRow = await prisma.$transaction(async (tx) => {
-        const deletedRow = await tx.dashboard_card.delete({ where: { id: req.body.id } });
+    const response = await prisma.$transaction(async (tx) => {
+        const keys = {
+            dashboard_id: req.body.dashboard_id,
+            dashboard_card_id: req.body.dashboard_card_id,
+        };
+        await tx.dashboard_card_settings.deleteMany({ where: keys });
+        const deletedRow = await tx.dashboard_card.delete({ where: { dashboard_id_dashboard_card_id: keys } });
         return deletedRow;
     });
-    res.status(200).json(JSend.success(deletedRow));
+    res.status(200).json(JSend.success(response));
 }));
 
 export default router;

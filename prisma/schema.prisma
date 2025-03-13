@@ -7,49 +7,63 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model dashboard {
-  id                      Int                       @id @default(autoincrement())
-  team_id                 Int
-  description             String?                   @db.Text
-  team                    team                      @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_team_id")
-  dashboard_card          dashboard_card[]
-  dashboard_card_settings dashboard_card_settings[]
-
-  @@index([team_id], map: "dashboard_team_id")
-}
-
-model user {
-  id       Int    @id @default(autoincrement())
-  username String @db.VarChar(64)
-  password String @db.VarChar(64)
-  team_id  Int
-  team     team   @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_team_id")
-
-  @@index([team_id], map: "user_team_id")
-}
-
 model card {
-  id             String           @id @db.VarChar(64)
+  card_id        String           @id @db.VarChar(64)
   description    String?          @db.Text
-  view_name      String?          @db.VarChar(64)
   card_settings  card_settings[]
   dashboard_card dashboard_card[]
 }
 
-model dashboard_card {
-  id                      Int                       @id @default(autoincrement())
-  dashboard_id            Int
+model card_settings {
   card_id                 String                    @db.VarChar(64)
+  setting_id              String                    @db.VarChar(64)
+  description             String?                   @db.Text
+  default_value           Json?
+  possible_values         Json?
+  card                    card                      @relation(fields: [card_id], references: [card_id], onDelete: NoAction, onUpdate: NoAction, map: "card_settings_card_id")
+  dashboard_card_settings dashboard_card_settings[]
+
+  @@id([card_id, setting_id])
+}
+
+model dashboard {
+  dashboard_id   Int              @id @default(autoincrement())
+  team_id        Int
+  description    String?          @db.Text
+  team           team             @relation(fields: [team_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_team_id")
+  dashboard_card dashboard_card[]
+
+  @@index([team_id], map: "dashboard_team_id")
+}
+
+model dashboard_card {
+  dashboard_id            Int
+  dashboard_card_id       Int
+  card_id                 String                    @db.VarChar(64)
+  title                   String?                   @db.Text
   x                       Int?
   y                       Int?
   width                   Int?
   height                  Int?
-  card                    card                      @relation(fields: [card_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_card_id")
-  dashboard               dashboard                 @relation(fields: [dashboard_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_dashboard_id")
+  card                    card                      @relation(fields: [card_id], references: [card_id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_card_id")
+  dashboard               dashboard                 @relation(fields: [dashboard_id], references: [dashboard_id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_dashboard_id")
   dashboard_card_settings dashboard_card_settings[]
 
+  @@id([dashboard_id, dashboard_card_id])
   @@index([card_id], map: "dashboard_card_card_id")
-  @@index([dashboard_id], map: "dashboard_card_dashboard_id")
+}
+
+model dashboard_card_settings {
+  dashboard_id      Int
+  dashboard_card_id Int
+  card_id           String         @db.VarChar(64)
+  setting_id        String         @db.VarChar(64)
+  value             Json?
+  card_settings     card_settings  @relation(fields: [card_id, setting_id], references: [card_id, setting_id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_settings_card_settings")
+  dashboard_card    dashboard_card @relation(fields: [dashboard_id, dashboard_card_id], references: [dashboard_id, dashboard_card_id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_settings_dashboard_card")
+
+  @@id([dashboard_id, dashboard_card_id, card_id, setting_id])
+  @@index([card_id, setting_id], map: "dashboard_card_settings_card_settings")
 }
 
 model dz_foul {
@@ -92,8 +106,8 @@ model game {
   referee_game_referee_1_idToreferee referee            @relation("game_referee_1_idToreferee", fields: [referee_1_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_referee_1_id")
   referee_game_referee_2_idToreferee referee            @relation("game_referee_2_idToreferee", fields: [referee_2_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_referee_2_id")
   referee_game_referee_3_idToreferee referee            @relation("game_referee_3_idToreferee", fields: [referee_3_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_referee_3_id")
-  team_game_team_guest_idToteam      team               @relation("game_team_guest_idToteam", fields: [team_guest_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_team_guest_id")
-  team_game_team_home_idToteam       team               @relation("game_team_home_idToteam", fields: [team_home_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_team_home_id")
+  team_game_team_guest_idToteam      team               @relation("game_team_guest_idToteam", fields: [team_guest_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "game_team_guest_id")
+  team_game_team_home_idToteam       team               @relation("game_team_home_idToteam", fields: [team_home_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "game_team_home_id")
   type_game                          type_game          @relation(fields: [type_game_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_type_game_id")
   play                               play[]
   player_team_game                   player_team_game[]
@@ -162,7 +176,7 @@ model player_team {
   date_start_utc BigInt?
   date_end_utc   BigInt?
   player         player  @relation(fields: [player_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_player_id")
-  team           team    @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_team_id")
+  team           team    @relation(fields: [team_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_team_id")
 
   @@id([player_id, team_id])
   @@index([team_id], map: "player_team_team_id")
@@ -174,7 +188,7 @@ model player_team_game {
   game_id               Int
   game                  game                    @relation(fields: [game_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_game_game_id")
   player                player                  @relation(fields: [player_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_game_player_id")
-  team                  team                    @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_game_team_id")
+  team                  team                    @relation(fields: [team_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_game_team_id")
   player_team_game_play player_team_game_play[]
 
   @@id([player_id, team_id, game_id])
@@ -230,7 +244,7 @@ model sub_play {
 }
 
 model team {
-  id                            Int                @id @default(autoincrement())
+  team_id                       Int                @id @default(autoincrement())
   name                          String             @db.VarChar(64)
   dashboard                     dashboard[]
   game_game_team_guest_idToteam game[]             @relation("game_team_guest_idToteam")
@@ -253,7 +267,7 @@ model trainer_team {
   team_id        Int
   date_start_utc BigInt?
   date_end_utc   BigInt?
-  team           team    @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "trainer_team_team_id")
+  team           team    @relation(fields: [team_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "trainer_team_team_id")
   trainer        trainer @relation(fields: [trainer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "trainer_team_trainer_id")
 
   @@id([trainer_id, team_id])
@@ -309,30 +323,12 @@ model type_sub_play {
   @@index([turnover_id], map: "type_sub_play_turnover_id")
 }
 
-model card_settings {
-  card_id                 String                    @db.VarChar(64)
-  setting_id              String                    @db.VarChar(64)
-  description             String?                   @db.Text
-  view_column             String?                   @db.VarChar(64)
-  default_value           Json?
-  possible_values         Json?
-  card                    card                      @relation(fields: [card_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "card_settings_card_id")
-  dashboard_card_settings dashboard_card_settings[]
+model user {
+  id       Int    @id @default(autoincrement())
+  username String @db.VarChar(64)
+  password String @db.VarChar(64)
+  team_id  Int
+  team     team   @relation(fields: [team_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "user_team_id")
 
-  @@id([card_id, setting_id])
-}
-
-model dashboard_card_settings {
-  dashboard_id      Int
-  dashboard_card_id Int
-  card_id           String         @db.VarChar(64)
-  setting_id        String         @db.VarChar(64)
-  value             Json?
-  card_settings     card_settings  @relation(fields: [card_id, setting_id], references: [card_id, setting_id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_settings_card_settings")
-  dashboard_card    dashboard_card @relation(fields: [dashboard_card_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_settings_dashboard_card_id")
-  dashboard         dashboard      @relation(fields: [dashboard_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_settings_dashboard_id")
-
-  @@id([dashboard_id, dashboard_card_id, card_id, setting_id])
-  @@index([card_id, setting_id], map: "dashboard_card_settings_card_settings")
-  @@index([dashboard_card_id], map: "dashboard_card_settings_dashboard_card_id")
+  @@index([team_id], map: "user_team_id")
 }
