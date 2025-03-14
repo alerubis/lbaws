@@ -29,17 +29,6 @@ async function generate(outputFolder: string) {
         classFileContent += `\nconst router = express.Router();`;
         classFileContent += `\nrouter.use(authenticateToken());\n`;
 
-        // Create route
-        /*
-        classFileContent += `\nrouter.post('/create', wrapAsync(async (req: any, res: any) => {\n`;
-        classFileContent += `    const createdRow = await prisma.$transaction(async (tx) => {\n`;
-        classFileContent += `        const createdRow = await tx.${tableName}.create({ data: req.body });\n`;
-        classFileContent += `        return createdRow;\n`;
-        classFileContent += `    });\n`;
-        classFileContent += `    res.status(200).json(JSend.success(createdRow));\n`;
-        classFileContent += `}));\n`;
-        */
-
         // Read route
         classFileContent += `\nrouter.post('/read', wrapAsync(async (req: any, res: any) => {\n`;
         classFileContent += `    const response = await prisma.$transaction(async (tx) => {\n`;
@@ -57,28 +46,6 @@ async function generate(outputFolder: string) {
         classFileContent += `    });\n`;
         classFileContent += `    res.status(200).json(JSend.success(response));\n`;
         classFileContent += `}));\n`;
-
-        // Update route
-        /*
-        classFileContent += `\nrouter.post('/update', wrapAsync(async (req: any, res: any) => {\n`;
-        classFileContent += `    const updatedRow = await prisma.$transaction(async (tx) => {\n`;
-        classFileContent += `        const updatedRow = await tx.${tableName}.update({ where: { id: req.body.id }, data: req.body });\n`;
-        classFileContent += `        return updatedRow;\n`;
-        classFileContent += `    });\n`;
-        classFileContent += `    res.status(200).json(JSend.success(updatedRow));\n`;
-        classFileContent += `}));\n`;
-        */
-
-        // Delete route
-        /*
-        classFileContent += `\nrouter.post('/delete', wrapAsync(async (req: any, res: any) => {\n`;
-        classFileContent += `    const deletedRow = await prisma.$transaction(async (tx) => {\n`;
-        classFileContent += `        const deletedRow = await tx.${tableName}.delete({ where: { id: req.body.id } });\n`;
-        classFileContent += `        return deletedRow;\n`;
-        classFileContent += `    });\n`;
-        classFileContent += `    res.status(200).json(JSend.success(deletedRow));\n`;
-        classFileContent += `}));\n`;
-        */
 
         // Export router
         classFileContent += `\nexport default router;\n`;
