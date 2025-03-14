@@ -10,15 +10,16 @@ const router = express.Router();
 router.use(authenticateToken());
 
 router.post('/create', wrapAsync(async (req: any, res: any) => {
-    const createdRow = await prisma.$transaction(async (tx) => {
-        const data = {
-            team_id: req.user.team_id,
-            description: req.body.description,
-        }
-        const a = await tx.dashboard.create({ data: data });
-        return a;
+    const response = await prisma.$transaction(async (tx) => {
+        const dashboard = await tx.dashboard.create({
+            data: {
+                description: req.body.description,
+                team_id: req.user.team_id,
+            }
+        });
+        return dashboard;
     });
-    res.status(200).json(JSend.success(createdRow));
+    res.status(200).json(JSend.success(response));
 }));
 
 router.post('/read', wrapAsync(async (req: any, res: any) => {
@@ -43,21 +44,30 @@ router.post('/read', wrapAsync(async (req: any, res: any) => {
 }));
 
 router.post('/update', wrapAsync(async (req: any, res: any) => {
-    const updatedRow = await prisma.$transaction(async (tx) => {
-        const updatedRow = await tx.dashboard.update({ where: { dashboard_id: req.body.dashboard_id, team_id: req.user.team_id }, data: req.body });
+    const response = await prisma.$transaction(async (tx) => {
+        const updatedRow = await tx.dashboard.update({
+            where: {
+                dashboard_id: req.body.dashboard_id,
+                team_id: req.user.team_id
+            },
+            data: {
+                ...req.body,
+                team_id: req.user.team_id,
+            }
+        });
         return updatedRow;
     });
-    res.status(200).json(JSend.success(updatedRow));
+    res.status(200).json(JSend.success(response));
 }));
 
 router.post('/delete', wrapAsync(async (req: any, res: any) => {
-    const deletedRow = await prisma.$transaction(async (tx) => {
+    const response = await prisma.$transaction(async (tx) => {
         await tx.dashboard_card_settings.deleteMany({ where: { dashboard_id: req.body.dashboard_id } });
         await tx.dashboard_card.deleteMany({ where: { dashboard_id: req.body.dashboard_id } });
         const deletedRow = await tx.dashboard.delete({ where: { dashboard_id: req.body.dashboard_id, team_id: req.user.team_id } });
         return deletedRow;
     });
-    res.status(200).json(JSend.success(deletedRow));
+    res.status(200).json(JSend.success(response));
 }));
 
 export default router;

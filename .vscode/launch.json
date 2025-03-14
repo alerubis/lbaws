@@ -5,14 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Attach to node",
+            "name": "Attach to Process",
             "type": "node",
             "request": "attach",
             "restart": true,
-            "port": 9229,
-            "sourceMaps": true,  // Abilita il supporto per i file di mappa sorgente
-            "skipFiles": ["<node_internals>/**"],  // Ignora i file interni di Node.js
-            "localRoot": "${workspaceFolder}/src",  // Cartella di origine locale
+            "port": 5858,
+            "outFiles": [],
+            "sourceMaps": true,
         }
     ]
 }
