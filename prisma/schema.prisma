@@ -30,7 +30,7 @@ model dashboard {
   dashboard_id   Int              @id @default(autoincrement())
   team_id        Int
   description    String?          @db.Text
-  team           team             @relation(fields: [team_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_team_id")
+  team           team             @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_team_id")
   dashboard_card dashboard_card[]
 
   @@index([team_id], map: "dashboard_team_id")
@@ -67,29 +67,29 @@ model dashboard_card_settings {
 }
 
 model dz_foul {
-  id            Int             @id @default(autoincrement())
-  description   String          @db.VarChar(64)
-  type_sub_play type_sub_play[]
+  id          Int        @id @default(autoincrement())
+  description String     @db.VarChar(64)
+  sub_play    sub_play[]
 }
 
 model dz_infraction {
-  id            Int             @id @default(autoincrement())
-  description   String          @db.VarChar(64)
-  type_sub_play type_sub_play[]
+  id          Int        @id @default(autoincrement())
+  description String     @db.VarChar(64)
+  sub_play    sub_play[]
 }
 
 model dz_shot {
-  id            Int             @id @default(autoincrement())
-  description   String          @db.VarChar(64)
-  point         Int
-  made_01       String          @db.VarChar(1)
-  type_sub_play type_sub_play[]
+  id          Int        @id @default(autoincrement())
+  description String     @db.VarChar(64)
+  point       Int
+  made_01     String     @db.VarChar(1)
+  sub_play    sub_play[]
 }
 
 model dz_turnover {
-  id            Int             @id @default(autoincrement())
-  description   String          @db.VarChar(64)
-  type_sub_play type_sub_play[]
+  id          Int        @id @default(autoincrement())
+  description String     @db.VarChar(64)
+  sub_play    sub_play[]
 }
 
 model game {
@@ -106,8 +106,8 @@ model game {
   referee_game_referee_1_idToreferee referee            @relation("game_referee_1_idToreferee", fields: [referee_1_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_referee_1_id")
   referee_game_referee_2_idToreferee referee            @relation("game_referee_2_idToreferee", fields: [referee_2_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_referee_2_id")
   referee_game_referee_3_idToreferee referee            @relation("game_referee_3_idToreferee", fields: [referee_3_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_referee_3_id")
-  team_game_team_guest_idToteam      team               @relation("game_team_guest_idToteam", fields: [team_guest_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "game_team_guest_id")
-  team_game_team_home_idToteam       team               @relation("game_team_home_idToteam", fields: [team_home_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "game_team_home_id")
+  team_game_team_guest_idToteam      team               @relation("game_team_guest_idToteam", fields: [team_guest_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_team_guest_id")
+  team_game_team_home_idToteam       team               @relation("game_team_home_idToteam", fields: [team_home_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_team_home_id")
   type_game                          type_game          @relation(fields: [type_game_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_type_game_id")
   play                               play[]
   player_team_game                   player_team_game[]
@@ -176,7 +176,7 @@ model player_team {
   date_start_utc BigInt?
   date_end_utc   BigInt?
   player         player  @relation(fields: [player_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_player_id")
-  team           team    @relation(fields: [team_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_team_id")
+  team           team    @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_team_id")
 
   @@id([player_id, team_id])
   @@index([team_id], map: "player_team_team_id")
@@ -188,7 +188,7 @@ model player_team_game {
   game_id               Int
   game                  game                    @relation(fields: [game_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_game_game_id")
   player                player                  @relation(fields: [player_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_game_player_id")
-  team                  team                    @relation(fields: [team_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_game_team_id")
+  team                  team                    @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_game_team_id")
   player_team_game_play player_team_game_play[]
 
   @@id([player_id, team_id, game_id])
@@ -231,20 +231,36 @@ model sub_play {
   player_suffered_id                                                                                                 Int?
   team_suffered_id                                                                                                   Int?
   game_suffered_id                                                                                                   Int?
-  type_sub_play_id                                                                                                   Int
+  shot_id                                                                                                            Int?
+  turnover_id                                                                                                        Int?
+  foul_id                                                                                                            Int?
+  infraction_id                                                                                                      Int?
+  rebound_defensive_01                                                                                               String?                @db.VarChar(1)
+  rebound_offensive_01                                                                                               String?                @db.VarChar(1)
+  assist_01                                                                                                          String?                @db.VarChar(1)
+  blocks_01                                                                                                          String?                @db.VarChar(1)
+  time_out_01                                                                                                        String?                @db.VarChar(1)
+  x                                                                                                                  Int?
+  y                                                                                                                  Int?
+  dz_foul                                                                                                            dz_foul?               @relation(fields: [foul_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sub_play_foul_id")
+  dz_infraction                                                                                                      dz_infraction?         @relation(fields: [infraction_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sub_play_infraction_id")
   play                                                                                                               play                   @relation(fields: [play_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sub_play_play_id")
   player_team_game_play_sub_play_player_made_id_team_made_id_game_made_id_play_idToplayer_team_game_play             player_team_game_play? @relation("sub_play_player_made_id_team_made_id_game_made_id_play_idToplayer_team_game_play", fields: [player_made_id, team_made_id, game_made_id, play_id], references: [player_id, team_id, game_id, play_id], onDelete: NoAction, onUpdate: NoAction, map: "sub_play_player_made_id_team_made_id_game_fat")
   player_team_game_play_sub_play_player_suffered_id_team_suffered_id_game_suffered_id_play_idToplayer_team_game_play player_team_game_play? @relation("sub_play_player_suffered_id_team_suffered_id_game_suffered_id_play_idToplayer_team_game_play", fields: [player_suffered_id, team_suffered_id, game_suffered_id, play_id], references: [player_id, team_id, game_id, play_id], onDelete: NoAction, onUpdate: NoAction, map: "sub_play_player_suffered_id_team_suffered_id_game_sub")
-  type_sub_play                                                                                                      type_sub_play          @relation(fields: [type_sub_play_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sub_play_type_sub_play_id")
+  dz_shot                                                                                                            dz_shot?               @relation(fields: [shot_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sub_play_shot_id")
+  dz_turnover                                                                                                        dz_turnover?           @relation(fields: [turnover_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sub_play_turnover_id")
 
   @@index([play_id], map: "sub_play_play_id")
   @@index([player_made_id, team_made_id, game_made_id, play_id], map: "sub_play_player_made_id_team_made_id_game_fat")
   @@index([player_suffered_id, team_suffered_id, game_suffered_id, play_id], map: "sub_play_player_suffered_id_team_suffered_id_game_sub")
-  @@index([type_sub_play_id], map: "sub_play_type_sub_play_id")
+  @@index([foul_id], map: "sub_play_foul_id")
+  @@index([infraction_id], map: "sub_play_infraction_id")
+  @@index([shot_id], map: "sub_play_shot_id")
+  @@index([turnover_id], map: "sub_play_turnover_id")
 }
 
 model team {
-  team_id                       Int                @id @default(autoincrement())
+  id                            Int                @id @default(autoincrement())
   name                          String             @db.VarChar(64)
   dashboard                     dashboard[]
   game_game_team_guest_idToteam game[]             @relation("game_team_guest_idToteam")
@@ -267,7 +283,7 @@ model trainer_team {
   team_id        Int
   date_start_utc BigInt?
   date_end_utc   BigInt?
-  team           team    @relation(fields: [team_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "trainer_team_team_id")
+  team           team    @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "trainer_team_team_id")
   trainer        trainer @relation(fields: [trainer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "trainer_team_trainer_id")
 
   @@id([trainer_id, team_id])
@@ -299,28 +315,7 @@ model type_league_type_game {
 }
 
 model type_sub_play {
-  id                   Int            @id @default(autoincrement())
-  shot_id              Int?
-  turnover_id          Int?
-  foul_id              Int?
-  infraction_id        Int?
-  rebound_defensive_01 String?        @db.VarChar(1)
-  rebound_offensive_01 String?        @db.VarChar(1)
-  assist_01            String?        @db.VarChar(1)
-  blocks_01            String?        @db.VarChar(1)
-  time_out_01          String?        @db.VarChar(1)
-  x                    Int?
-  y                    Int?
-  sub_play             sub_play[]
-  dz_foul              dz_foul?       @relation(fields: [foul_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "type_sub_play_foul_id")
-  dz_infraction        dz_infraction? @relation(fields: [infraction_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "type_sub_play_infraction_id")
-  dz_shot              dz_shot?       @relation(fields: [shot_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "type_sub_play_shot_id")
-  dz_turnover          dz_turnover?   @relation(fields: [turnover_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "type_sub_play_turnover_id")
-
-  @@index([foul_id], map: "type_sub_play_foul_id")
-  @@index([infraction_id], map: "type_sub_play_infraction_id")
-  @@index([shot_id], map: "type_sub_play_shot_id")
-  @@index([turnover_id], map: "type_sub_play_turnover_id")
+  id Int @id @default(autoincrement())
 }
 
 model user {
@@ -328,7 +323,7 @@ model user {
   username String @db.VarChar(64)
   password String @db.VarChar(64)
   team_id  Int
-  team     team   @relation(fields: [team_id], references: [team_id], onDelete: NoAction, onUpdate: NoAction, map: "user_team_id")
+  team     team   @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_team_id")
 
   @@index([team_id], map: "user_team_id")
 }
