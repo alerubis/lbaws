@@ -12,10 +12,14 @@ router.use(authenticateToken());
 router.post('/create', wrapAsync(async (req: any, res: any) => {
     const response = await prisma.$transaction(async (tx) => {
         const card = await tx.card.findUnique({ where: { card_id: req.body.card_id } });
+        const maxDashboardCard = await tx.dashboard_card.findFirst({
+            where: { dashboard_id: req.body.dashboard_id },
+            orderBy: { dashboard_card_id: 'desc' }
+        });
         const data = {
             ...req.body,
             title: card?.description,
-            dashboard_card_id: 1,
+            dashboard_card_id: (maxDashboardCard?.dashboard_card_id || 0) + 1,
         };
         const dashboardCard = await tx.dashboard_card.create({ data: data });
         const cardSettings = await tx.card_settings.findMany({ where: { card_id: dashboardCard.card_id } });
