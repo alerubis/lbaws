@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -18,15 +19,12 @@ model card_settings {
   card_id                 String                    @db.VarChar(64)
   setting_id              String                    @db.VarChar(64)
   description             String?                   @db.Text
-  card_settings_type_id   String                    @db.VarChar(64)
   default_value           Json?
   possible_values         Json?
   card                    card                      @relation(fields: [card_id], references: [card_id], onDelete: NoAction, onUpdate: NoAction, map: "card_settings_card_id")
-  card_settings_type      card_settings_type        @relation(fields: [card_settings_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "card_settings_card_settings_type_id")
   dashboard_card_settings dashboard_card_settings[]
 
   @@id([card_id, setting_id])
-  @@index([card_settings_type_id], map: "card_settings_card_settings_type_id")
 }
 
 model dashboard {
@@ -331,8 +329,230 @@ model user {
   @@index([team_id], map: "user_team_id")
 }
 
-model card_settings_type {
-  id            String          @id @db.VarChar(64)
-  description   String?         @db.Text
-  card_settings card_settings[]
+model card_type {
+  id          String  @id @db.VarChar(64)
+  description String? @db.Text
+}
+
+view v_player_year_league_summary {
+  player_id                Int      @id @default(0)
+  player_name              String   @db.VarChar(64)
+  player_surname           String   @db.VarChar(64)
+  league_year_id           Int      @default(0)
+  league_id                Int      @default(0)
+  league_name              String   @db.VarChar(64)
+  total_sub_plays          BigInt   @default(0)
+  total_shots              Decimal? @db.Decimal(23, 0)
+  one_point_shots_made     Decimal? @db.Decimal(23, 0)
+  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  two_point_shots_made     Decimal? @db.Decimal(23, 0)
+  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  three_point_shots_made   Decimal? @db.Decimal(23, 0)
+  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
+  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
+  total_fouls              Decimal? @db.Decimal(23, 0)
+  total_infractions        Decimal? @db.Decimal(23, 0)
+  total_turnovers          Decimal? @db.Decimal(23, 0)
+  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_assists            Decimal? @db.Decimal(23, 0)
+  total_blocks             Decimal? @db.Decimal(23, 0)
+  total_timeouts           Decimal? @db.Decimal(23, 0)
+}
+
+view v_player_year_league_summary_minute_game {
+  player_id                Int      @id @default(0)
+  player_name              String   @db.VarChar(64)
+  league_year_id           Int      @default(0)
+  league_id                Int      @default(0)
+  league_name              String   @db.VarChar(64)
+  minute_in_game           BigInt?
+  total_sub_plays          BigInt   @default(0)
+  total_shots              Decimal? @db.Decimal(23, 0)
+  one_point_shots_made     Decimal? @db.Decimal(23, 0)
+  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  two_point_shots_made     Decimal? @db.Decimal(23, 0)
+  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  three_point_shots_made   Decimal? @db.Decimal(23, 0)
+  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
+  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
+  total_fouls              Decimal? @db.Decimal(23, 0)
+  total_infractions        Decimal? @db.Decimal(23, 0)
+  total_turnovers          Decimal? @db.Decimal(23, 0)
+  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_assists            Decimal? @db.Decimal(23, 0)
+  total_blocks             Decimal? @db.Decimal(23, 0)
+  total_timeouts           Decimal? @db.Decimal(23, 0)
+}
+
+view v_player_year_league_summary_minute_quarter {
+  player_id                Int      @id @default(0)
+  player_name              String   @db.VarChar(64)
+  league_year_id           Int      @default(0)
+  league_id                Int      @default(0)
+  league_name              String   @db.VarChar(64)
+  minute_in_quarter        BigInt?
+  total_sub_plays          BigInt   @default(0)
+  total_shots              Decimal? @db.Decimal(23, 0)
+  one_point_shots_made     Decimal? @db.Decimal(23, 0)
+  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  two_point_shots_made     Decimal? @db.Decimal(23, 0)
+  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  three_point_shots_made   Decimal? @db.Decimal(23, 0)
+  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
+  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
+  total_fouls              Decimal? @db.Decimal(23, 0)
+  total_infractions        Decimal? @db.Decimal(23, 0)
+  total_turnovers          Decimal? @db.Decimal(23, 0)
+  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_assists            Decimal? @db.Decimal(23, 0)
+  total_blocks             Decimal? @db.Decimal(23, 0)
+  total_timeouts           Decimal? @db.Decimal(23, 0)
+}
+
+view v_player_year_league_summary_seconds_play {
+  player_id                Int      @id @default(0)
+  player_name              String   @db.VarChar(64)
+  league_year_id           Int      @default(0)
+  league_id                Int      @default(0)
+  league_name              String   @db.VarChar(64)
+  second_in_play           Int?
+  total_sub_plays          BigInt   @default(0)
+  total_shots              Decimal? @db.Decimal(23, 0)
+  one_point_shots_made     Decimal? @db.Decimal(23, 0)
+  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  two_point_shots_made     Decimal? @db.Decimal(23, 0)
+  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  three_point_shots_made   Decimal? @db.Decimal(23, 0)
+  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
+  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
+  total_fouls              Decimal? @db.Decimal(23, 0)
+  total_infractions        Decimal? @db.Decimal(23, 0)
+  total_turnovers          Decimal? @db.Decimal(23, 0)
+  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_assists            Decimal? @db.Decimal(23, 0)
+  total_blocks             Decimal? @db.Decimal(23, 0)
+  total_timeouts           Decimal? @db.Decimal(23, 0)
+}
+
+view v_team_year_league_summary {
+  team_id                  Int      @id @default(0)
+  team_name                String   @db.VarChar(64)
+  league_year_id           Int      @default(0)
+  league_id                Int      @default(0)
+  league_name              String   @db.VarChar(64)
+  total_sub_plays          BigInt   @default(0)
+  total_shots              Decimal? @db.Decimal(23, 0)
+  one_point_shots_made     Decimal? @db.Decimal(23, 0)
+  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  two_point_shots_made     Decimal? @db.Decimal(23, 0)
+  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  three_point_shots_made   Decimal? @db.Decimal(23, 0)
+  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
+  one_point_shot_perc      Decimal? @db.Decimal(27, 4)
+  two_point_shot_perc      Decimal? @db.Decimal(27, 4)
+  three_point_shot_perc    Decimal? @db.Decimal(27, 4)
+  total_fouls              Decimal? @db.Decimal(23, 0)
+  total_infractions        Decimal? @db.Decimal(23, 0)
+  total_turnovers          Decimal? @db.Decimal(23, 0)
+  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_assists            Decimal? @db.Decimal(23, 0)
+  total_blocks             Decimal? @db.Decimal(23, 0)
+  total_timeouts           Decimal? @db.Decimal(23, 0)
+}
+
+view v_team_year_league_summary_minutes_game {
+  team_id                  Int      @id @default(0)
+  team_name                String   @db.VarChar(64)
+  league_year_id           Int      @default(0)
+  league_id                Int      @default(0)
+  league_name              String   @db.VarChar(64)
+  minute_in_game           BigInt?
+  total_sub_plays          BigInt   @default(0)
+  total_shots              Decimal? @db.Decimal(23, 0)
+  one_point_shots_made     Decimal? @db.Decimal(23, 0)
+  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  two_point_shots_made     Decimal? @db.Decimal(23, 0)
+  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  three_point_shots_made   Decimal? @db.Decimal(23, 0)
+  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
+  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
+  total_fouls              Decimal? @db.Decimal(23, 0)
+  total_infractions        Decimal? @db.Decimal(23, 0)
+  total_turnovers          Decimal? @db.Decimal(23, 0)
+  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_assists            Decimal? @db.Decimal(23, 0)
+  total_blocks             Decimal? @db.Decimal(23, 0)
+  total_timeouts           Decimal? @db.Decimal(23, 0)
+}
+
+view v_team_year_league_summary_minutes_quarter {
+  team_id                  Int      @id @default(0)
+  team_name                String   @db.VarChar(64)
+  league_year_id           Int      @default(0)
+  league_id                Int      @default(0)
+  league_name              String   @db.VarChar(64)
+  minute_in_quarter        BigInt?
+  total_sub_plays          BigInt   @default(0)
+  total_shots              Decimal? @db.Decimal(23, 0)
+  one_point_shots_made     Decimal? @db.Decimal(23, 0)
+  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  two_point_shots_made     Decimal? @db.Decimal(23, 0)
+  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  three_point_shots_made   Decimal? @db.Decimal(23, 0)
+  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
+  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
+  total_fouls              Decimal? @db.Decimal(23, 0)
+  total_infractions        Decimal? @db.Decimal(23, 0)
+  total_turnovers          Decimal? @db.Decimal(23, 0)
+  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_assists            Decimal? @db.Decimal(23, 0)
+  total_blocks             Decimal? @db.Decimal(23, 0)
+  total_timeouts           Decimal? @db.Decimal(23, 0)
+}
+
+view v_team_year_league_summary_seconds_play {
+  team_id                  Int      @id @default(0)
+  team_name                String   @db.VarChar(64)
+  league_year_id           Int      @default(0)
+  league_id                Int      @default(0)
+  league_name              String   @db.VarChar(64)
+  second_in_play           Int?
+  total_sub_plays          BigInt   @default(0)
+  total_shots              Decimal? @db.Decimal(23, 0)
+  one_point_shots_made     Decimal? @db.Decimal(23, 0)
+  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  two_point_shots_made     Decimal? @db.Decimal(23, 0)
+  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
+  three_point_shots_made   Decimal? @db.Decimal(23, 0)
+  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
+  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
+  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
+  total_fouls              Decimal? @db.Decimal(23, 0)
+  total_infractions        Decimal? @db.Decimal(23, 0)
+  total_turnovers          Decimal? @db.Decimal(23, 0)
+  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
+  total_assists            Decimal? @db.Decimal(23, 0)
+  total_blocks             Decimal? @db.Decimal(23, 0)
+  total_timeouts           Decimal? @db.Decimal(23, 0)
 }

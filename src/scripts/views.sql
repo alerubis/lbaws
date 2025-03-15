@@ -1,12 +1,12 @@
-CREATE VIEW team_year_league_summary AS
-SELECT 
+CREATE VIEW v_team_year_league_summary AS
+SELECT
     t.id AS team_id,
     t.name AS team_name,
     ly.id AS league_year_id,
     l.id AS league_id,
     l.name AS league_name,
     COUNT(sp.id) AS total_sub_plays,
-    
+
     -- Shot types aggregation
     SUM(CASE WHEN sp.shot_id IS NOT NULL THEN 1 ELSE 0 END) AS total_shots,
     SUM(CASE WHEN ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS one_point_shots_made,
@@ -15,33 +15,33 @@ SELECT
     SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS two_point_shots_miss,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS three_point_shots_made,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS three_point_shots_miss,
-    
+
     -- Shot perc
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS one_point_shot_perc,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS two_point_shot_perc,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS three_point_shot_perc,
-    
+
     -- Fouls aggregation
     SUM(CASE WHEN sp.foul_id IS NOT NULL THEN 1 ELSE 0 END) AS total_fouls,
-    
+
     -- Infractions aggregation
     SUM(CASE WHEN sp.infraction_id IS NOT NULL THEN 1 ELSE 0 END) AS total_infractions,
-    
+
     -- Turnovers aggregation
     SUM(CASE WHEN sp.turnover_id IS NOT NULL THEN 1 ELSE 0 END) AS total_turnovers,
-    
+
     -- Boolean values aggregation
     SUM(CASE WHEN sp.rebound_defensive_01 = '1' THEN 1 ELSE 0 END) AS total_defensive_rebounds,
     SUM(CASE WHEN sp.rebound_offensive_01 = '1' THEN 1 ELSE 0 END) AS total_offensive_rebounds,
@@ -62,8 +62,8 @@ JOIN team t ON t.id IN (sp.team_made_id, sp.team_suffered_id)
 GROUP BY t.id, ly.id, l.id;
 
 
-CREATE VIEW team_year_league_summary_seconds_play AS
-SELECT 
+CREATE VIEW v_team_year_league_summary_seconds_play AS
+SELECT
     t.id AS team_id,
     t.name AS team_name,
     ly.id AS league_year_id,
@@ -71,7 +71,7 @@ SELECT
     l.name AS league_name,
     sp.seconds_da_start AS second_in_play,
     COUNT(sp.id) AS total_sub_plays,
-    
+
     -- Shot types aggregation
     SUM(CASE WHEN sp.shot_id IS NOT NULL THEN 1 ELSE 0 END) AS total_shots,
     SUM(CASE WHEN ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS one_point_shots_made,
@@ -80,33 +80,33 @@ SELECT
     SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS two_point_shots_miss,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS three_point_shots_made,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS three_point_shots_miss,
-    
+
     -- Shot ratios
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS one_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS two_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS three_point_shot_ratio,
-    
+
     -- Fouls aggregation
     SUM(CASE WHEN sp.foul_id IS NOT NULL THEN 1 ELSE 0 END) AS total_fouls,
-    
+
     -- Infractions aggregation
     SUM(CASE WHEN sp.infraction_id IS NOT NULL THEN 1 ELSE 0 END) AS total_infractions,
-    
+
     -- Turnovers aggregation
     SUM(CASE WHEN sp.turnover_id IS NOT NULL THEN 1 ELSE 0 END) AS total_turnovers,
-    
+
     -- Boolean values aggregation
     SUM(CASE WHEN sp.rebound_defensive_01 = '1' THEN 1 ELSE 0 END) AS total_defensive_rebounds,
     SUM(CASE WHEN sp.rebound_offensive_01 = '1' THEN 1 ELSE 0 END) AS total_offensive_rebounds,
@@ -127,8 +127,8 @@ JOIN team t ON t.id IN (sp.team_made_id, sp.team_suffered_id)
 GROUP BY t.id, ly.id, l.id, sp.seconds_da_start;
 
 
-CREATE VIEW team_year_league_summary_minutes_quarter AS
-SELECT 
+CREATE VIEW v_team_year_league_summary_minutes_quarter AS
+SELECT
     t.id AS team_id,
     t.name AS team_name,
     ly.id AS league_year_id,
@@ -136,7 +136,7 @@ SELECT
     l.name AS league_name,
     FLOOR((p.seconds_start % 600) / 60) AS minute_in_quarter,
     COUNT(sp.id) AS total_sub_plays,
-    
+
     -- Shot types aggregation
     SUM(CASE WHEN sp.shot_id IS NOT NULL THEN 1 ELSE 0 END) AS total_shots,
     SUM(CASE WHEN ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS one_point_shots_made,
@@ -145,33 +145,33 @@ SELECT
     SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS two_point_shots_miss,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS three_point_shots_made,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS three_point_shots_miss,
-    
+
     -- Shot ratios
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS one_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS two_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS three_point_shot_ratio,
-    
+
     -- Fouls aggregation
     SUM(CASE WHEN sp.foul_id IS NOT NULL THEN 1 ELSE 0 END) AS total_fouls,
-    
+
     -- Infractions aggregation
     SUM(CASE WHEN sp.infraction_id IS NOT NULL THEN 1 ELSE 0 END) AS total_infractions,
-    
+
     -- Turnovers aggregation
     SUM(CASE WHEN sp.turnover_id IS NOT NULL THEN 1 ELSE 0 END) AS total_turnovers,
-    
+
     -- Boolean values aggregation
     SUM(CASE WHEN sp.rebound_defensive_01 = '1' THEN 1 ELSE 0 END) AS total_defensive_rebounds,
     SUM(CASE WHEN sp.rebound_offensive_01 = '1' THEN 1 ELSE 0 END) AS total_offensive_rebounds,
@@ -192,8 +192,8 @@ JOIN team t ON t.id IN (sp.team_made_id, sp.team_suffered_id)
 GROUP BY t.id, ly.id, l.id, minute_in_quarter;
 
 
-CREATE VIEW team_year_league_summary_minutes_game AS
-SELECT 
+CREATE VIEW v_team_year_league_summary_minutes_game AS
+SELECT
     t.id AS team_id,
     t.name AS team_name,
     ly.id AS league_year_id,
@@ -201,7 +201,7 @@ SELECT
     l.name AS league_name,
     FLOOR(p.seconds_start / 60) AS minute_in_game,
     COUNT(sp.id) AS total_sub_plays,
-    
+
     -- Shot types aggregation
     SUM(CASE WHEN sp.shot_id IS NOT NULL THEN 1 ELSE 0 END) AS total_shots,
     SUM(CASE WHEN ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS one_point_shots_made,
@@ -210,33 +210,33 @@ SELECT
     SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS two_point_shots_miss,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS three_point_shots_made,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS three_point_shots_miss,
-    
+
     -- Shot ratios
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS one_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS two_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS three_point_shot_ratio,
-    
+
     -- Fouls aggregation
     SUM(CASE WHEN sp.foul_id IS NOT NULL THEN 1 ELSE 0 END) AS total_fouls,
-    
+
     -- Infractions aggregation
     SUM(CASE WHEN sp.infraction_id IS NOT NULL THEN 1 ELSE 0 END) AS total_infractions,
-    
+
     -- Turnovers aggregation
     SUM(CASE WHEN sp.turnover_id IS NOT NULL THEN 1 ELSE 0 END) AS total_turnovers,
-    
+
     -- Boolean values aggregation
     SUM(CASE WHEN sp.rebound_defensive_01 = '1' THEN 1 ELSE 0 END) AS total_defensive_rebounds,
     SUM(CASE WHEN sp.rebound_offensive_01 = '1' THEN 1 ELSE 0 END) AS total_offensive_rebounds,
@@ -257,8 +257,8 @@ JOIN team t ON t.id IN (sp.team_made_id, sp.team_suffered_id)
 GROUP BY t.id, ly.id, l.id, minute_in_game;
 
 
-CREATE VIEW player_year_league_summary AS
-SELECT 
+CREATE VIEW v_player_year_league_summary AS
+SELECT
     p.id AS player_id,
     p.name AS player_name,
     p.surname AS player_surname,
@@ -266,7 +266,7 @@ SELECT
     l.id AS league_id,
     l.name AS league_name,
     COUNT(sp.id) AS total_sub_plays,
-    
+
     -- Shot types aggregation
     SUM(CASE WHEN sp.shot_id IS NOT NULL THEN 1 ELSE 0 END) AS total_shots,
     SUM(CASE WHEN ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS one_point_shots_made,
@@ -275,33 +275,33 @@ SELECT
     SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS two_point_shots_miss,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS three_point_shots_made,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS three_point_shots_miss,
-    
+
     -- Shot ratios
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS one_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS two_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS three_point_shot_ratio,
-    
+
     -- Fouls aggregation
     SUM(CASE WHEN sp.foul_id IS NOT NULL THEN 1 ELSE 0 END) AS total_fouls,
-    
+
     -- Infractions aggregation
     SUM(CASE WHEN sp.infraction_id IS NOT NULL THEN 1 ELSE 0 END) AS total_infractions,
-    
+
     -- Turnovers aggregation
     SUM(CASE WHEN sp.turnover_id IS NOT NULL THEN 1 ELSE 0 END) AS total_turnovers,
-    
+
     -- Boolean values aggregation
     SUM(CASE WHEN sp.rebound_defensive_01 = '1' THEN 1 ELSE 0 END) AS total_defensive_rebounds,
     SUM(CASE WHEN sp.rebound_offensive_01 = '1' THEN 1 ELSE 0 END) AS total_offensive_rebounds,
@@ -322,8 +322,8 @@ JOIN player p ON p.id = sp.player_made_id OR p.id = sp.player_suffered_id
 GROUP BY p.id, ly.id, l.id;
 
 
-CREATE VIEW player_year_league_summary_seconds_play AS
-SELECT 
+CREATE VIEW v_player_year_league_summary_seconds_play AS
+SELECT
     p.id AS player_id,
     p.name AS player_name,
     ly.id AS league_year_id,
@@ -340,33 +340,33 @@ SELECT
     SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS two_point_shots_miss,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS three_point_shots_made,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS three_point_shots_miss,
-    
+
     -- Shot ratios
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS one_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS two_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS three_point_shot_ratio,
-    
+
     -- Fouls aggregation
     SUM(CASE WHEN sp.foul_id IS NOT NULL THEN 1 ELSE 0 END) AS total_fouls,
-    
+
     -- Infractions aggregation
     SUM(CASE WHEN sp.infraction_id IS NOT NULL THEN 1 ELSE 0 END) AS total_infractions,
-    
+
     -- Turnovers aggregation
     SUM(CASE WHEN sp.turnover_id IS NOT NULL THEN 1 ELSE 0 END) AS total_turnovers,
-    
+
     -- Boolean values aggregation
     SUM(CASE WHEN sp.rebound_defensive_01 = '1' THEN 1 ELSE 0 END) AS total_defensive_rebounds,
     SUM(CASE WHEN sp.rebound_offensive_01 = '1' THEN 1 ELSE 0 END) AS total_offensive_rebounds,
@@ -387,8 +387,8 @@ JOIN player p ON p.id = sp.player_made_id
 GROUP BY p.id, ly.id, l.id, sp.seconds_da_start;
 
 
-CREATE VIEW player_year_league_summary_minute_quarter AS
-SELECT 
+CREATE VIEW v_player_year_league_summary_minute_quarter AS
+SELECT
     p.id AS player_id,
     p.name AS player_name,
     ly.id AS league_year_id,
@@ -405,33 +405,33 @@ SELECT
     SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS two_point_shots_miss,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS three_point_shots_made,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS three_point_shots_miss,
-    
+
     -- Shot ratios
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS one_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS two_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS three_point_shot_ratio,
-    
+
     -- Fouls aggregation
     SUM(CASE WHEN sp.foul_id IS NOT NULL THEN 1 ELSE 0 END) AS total_fouls,
-    
+
     -- Infractions aggregation
     SUM(CASE WHEN sp.infraction_id IS NOT NULL THEN 1 ELSE 0 END) AS total_infractions,
-    
+
     -- Turnovers aggregation
     SUM(CASE WHEN sp.turnover_id IS NOT NULL THEN 1 ELSE 0 END) AS total_turnovers,
-    
+
     -- Boolean values aggregation
     SUM(CASE WHEN sp.rebound_defensive_01 = '1' THEN 1 ELSE 0 END) AS total_defensive_rebounds,
     SUM(CASE WHEN sp.rebound_offensive_01 = '1' THEN 1 ELSE 0 END) AS total_offensive_rebounds,
@@ -453,8 +453,8 @@ GROUP BY p.id, ly.id, l.id, minute_in_quarter;
 
 
 
-CREATE VIEW player_year_league_summary_minute_game AS
-SELECT 
+CREATE VIEW v_player_year_league_summary_minute_game AS
+SELECT
     p.id AS player_id,
     p.name AS player_name,
     ly.id AS league_year_id,
@@ -471,33 +471,33 @@ SELECT
     SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS two_point_shots_miss,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS three_point_shots_made,
     SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS three_point_shots_miss,
-    
+
     -- Shot ratios
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 1 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS one_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 2 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 2 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS two_point_shot_ratio,
-    CASE 
-        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0 
+    CASE
+        WHEN SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END) > 0
         THEN SUM(CASE WHEN ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) / SUM(CASE WHEN ds.point = 3 THEN 1 ELSE 0 END)
-        ELSE 0 
+        ELSE 0
     END AS three_point_shot_ratio,
-    
+
     -- Fouls aggregation
     SUM(CASE WHEN sp.foul_id IS NOT NULL THEN 1 ELSE 0 END) AS total_fouls,
-    
+
     -- Infractions aggregation
     SUM(CASE WHEN sp.infraction_id IS NOT NULL THEN 1 ELSE 0 END) AS total_infractions,
-    
+
     -- Turnovers aggregation
     SUM(CASE WHEN sp.turnover_id IS NOT NULL THEN 1 ELSE 0 END) AS total_turnovers,
-    
+
     -- Boolean values aggregation
     SUM(CASE WHEN sp.rebound_defensive_01 = '1' THEN 1 ELSE 0 END) AS total_defensive_rebounds,
     SUM(CASE WHEN sp.rebound_offensive_01 = '1' THEN 1 ELSE 0 END) AS total_offensive_rebounds,
