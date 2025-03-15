@@ -18,12 +18,15 @@ model card_settings {
   card_id                 String                    @db.VarChar(64)
   setting_id              String                    @db.VarChar(64)
   description             String?                   @db.Text
+  card_settings_type_id   String                    @db.VarChar(64)
   default_value           Json?
   possible_values         Json?
   card                    card                      @relation(fields: [card_id], references: [card_id], onDelete: NoAction, onUpdate: NoAction, map: "card_settings_card_id")
+  card_settings_type      card_settings_type        @relation(fields: [card_settings_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "card_settings_card_settings_type_id")
   dashboard_card_settings dashboard_card_settings[]
 
   @@id([card_id, setting_id])
+  @@index([card_settings_type_id], map: "card_settings_card_settings_type_id")
 }
 
 model dashboard {
@@ -326,4 +329,10 @@ model user {
   team     team   @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_team_id")
 
   @@index([team_id], map: "user_team_id")
+}
+
+model card_settings_type {
+  id            String          @id @db.VarChar(64)
+  description   String?         @db.Text
+  card_settings card_settings[]
 }
