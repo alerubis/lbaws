@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "nodemon src/index.ts",
-    "debug": "nodemon --exec \"node --inspect=0.0.0.0:9229 --require ts-node/register --enable-source-maps src/index.ts\"",
+    "debug": "nodemon --inspect=5858 -e ts,tsx --exec node -r ts-node/register ./src/index.ts",
     "prisma-pull": "prisma db pull && prisma generate",
     "routes-generator": "ts-node src/scripts/routes-generator.ts src/routes/db/auto",
     "types-generator": "ts-node src/scripts/types-generator.ts ../lba/src/app/shared/types/db/auto",
@@ -22,10 +22,12 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
+    "@types/lodash": "^4.17.16",
     "@types/node": "^22.10.7",
     "nodemon": "^3.1.9",
     "prisma": "^6.4.1",

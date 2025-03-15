@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import express from 'express';
+import _ from 'lodash';
 import { authenticateToken } from '../../../shared/auth';
 import { wrapAsync } from '../../../shared/functions';
 import { JSend } from '../../../shared/jsend';
@@ -18,8 +19,8 @@ router.post('/create', wrapAsync(async (req: any, res: any) => {
         });
         const data = {
             ...req.body,
-            title: card?.description,
             dashboard_card_id: (maxDashboardCard?.dashboard_card_id || 0) + 1,
+            title: card?.description,
         };
         const dashboardCard = await tx.dashboard_card.create({ data: data });
         const cardSettings = await tx.card_settings.findMany({ where: { card_id: dashboardCard.card_id } });
@@ -41,13 +42,10 @@ router.post('/create', wrapAsync(async (req: any, res: any) => {
 
 router.post('/read', wrapAsync(async (req: any, res: any) => {
     const response = await prisma.$transaction(async (tx) => {
-        const where = {
-            ...req.body?.where,
-        }
         const rows = await tx.dashboard_card.findMany({
             skip: req.body?.skip,
             take: req.body?.take || 1,
-            where: where,
+            where: req.body?.where,
             orderBy: req.body?.orderBy,
         });
         const count = await tx.dashboard_card.count({ where: req.body?.where });
@@ -65,8 +63,12 @@ router.post('/update', wrapAsync(async (req: any, res: any) => {
             dashboard_id: req.body.dashboard_id,
             dashboard_card_id: req.body.dashboard_card_id,
         };
-        const dashboardCard = await tx.dashboard_card.update({ where: { dashboard_id_dashboard_card_id: keys }, data: { title: req.body.title } });
-        const dashboardCardSettings = req.body.dashboard_card_settings;
+        const data = _.omit(req.body, ['dashboardCardSettings']);
+        const dashboardCard = await tx.dashboard_card.update({
+            where: { dashboard_id_dashboard_card_id: keys },
+            data: data,
+        });
+        const dashboardCardSettings = req.body.dashboardCardSettings;
         if (dashboardCardSettings) {
             for (const setting of dashboardCardSettings) {
                 if (setting.setting_id) {
