@@ -291,3 +291,5 @@ CREATE TABLE `card_type` (
 
 alter table card add column card_type_id varchar(64) NOT null after card_id;
 alter table card add CONSTRAINT card_card_type_id FOREIGN KEY (card_type_id) REFERENCES card_type (id);
+alter table dashboard add column card_type_id varchar(64) NOT null after dashboard_id;
+alter table dashboard add CONSTRAINT dashboard_card_type_id FOREIGN KEY (card_type_id) REFERENCES card_type (id);

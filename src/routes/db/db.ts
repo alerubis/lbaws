@@ -2,6 +2,7 @@ import express from 'express';
 
 // Auto
 import cardRoutes from './auto/card-routes';
+import cardTypeRoutes from './auto/card_type-routes';
 import cardSetttingsRoutes from './auto/card_settings-routes';
 import dashboardCardSettingsRoutes from './auto/dashboard_card_settings-routes';
 import v_player_year_league_summary_minute_game_routes from './auto/v_player_year_league_summary_minute_game-routes';
@@ -21,6 +22,7 @@ const router = express.Router();
 
 // Auto
 router.use('/card', cardRoutes);
+router.use('/card_type', cardTypeRoutes);
 router.use('/card_settings', cardSetttingsRoutes);
 router.use('/dashboard_card_settings', dashboardCardSettingsRoutes);
 

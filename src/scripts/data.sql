@@ -1,14 +1,14 @@
 
-INSERT INTO lba.card_type
+INSERT INTO card_type
 (id, description)
 VALUES('PLAYER', 'Card per analisi giocatori');
-INSERT INTO lba.card_type
+INSERT INTO card_type
 (id, description)
 VALUES('GAME', 'Card per analisi partite');
-INSERT INTO lba.card_type
+INSERT INTO card_type
 (id, description)
 VALUES('TEAM', 'Card per analisi squadre');
-INSERT INTO lba.card_type
+INSERT INTO card_type
 (id, description)
 VALUES('LEAGUE_YEAR', 'Card per analisi una leghe');
 
