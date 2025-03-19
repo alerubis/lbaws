@@ -12,11 +12,40 @@ INSERT INTO card_type
 (id, description)
 VALUES('LEAGUE_YEAR', 'Card per analisi una leghe');
 
-INSERT INTO card (card_id, card_type_id, description) VALUES('AREA', 'PLAYER', 'Area chart');
+INSERT INTO card
+(card_id, card_type_id, description)
+VALUES('LPSP', 'PLAYER', 'Area seconds play');
+INSERT INTO card
+(card_id, card_type_id, description)
+VALUES('LTSP', 'TEAM', 'Area seconds play');
 
-INSERT INTO card_settings (card_id, setting_id, description, default_value, possible_values) VALUES('AREA', 'X', 'Asse X', '"team_year_league_summary_seconds_play"', '["team_year_league_summary_seconds_play", "team_year_league_summary_minutes_quart", "team_year_league_summary_minutes_game"]');
-INSERT INTO card_settings (card_id, setting_id, description, default_value, possible_values) VALUES('AREA', 'Y', 'Asse Y', '"%2"', '["%2", "%3"]');
+INSERT INTO card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('LPSP', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('LTSP', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["two_point_shot_ratio", "three_point_shot_ratio"]');
 
+INSERT INTO dashboard
+(dashboard_id, card_type_id, team_id, description)
+VALUES(6, 'GAME', 1, 'Analisi partite offensive');
+INSERT INTO dashboard
+(dashboard_id, card_type_id, team_id, description)
+VALUES(7, 'GAME', 1, 'Analisi partite difensive');
+
+INSERT INTO dashboard_card
+(dashboard_id, dashboard_card_id, card_id, title, x, y, width, height)
+VALUES(6, 1, 'LPSP', 'Area seconds play', 0, 0, 6, 3);
+INSERT INTO dashboard_card
+(dashboard_id, dashboard_card_id, card_id, title, x, y, width, height)
+VALUES(6, 2, 'LTSP', 'Area seconds play', 6, 0, 6, 3);
+
+INSERT INTO dashboard_card_settings
+(dashboard_id, dashboard_card_id, card_id, setting_id, value)
+VALUES(6, 1, 'LPSP', 'Y', '"two_point_shot_ratio"');
+INSERT INTO dashboard_card_settings
+(dashboard_id, dashboard_card_id, card_id, setting_id, value)
+VALUES(6, 2, 'LTSP', 'Y', '"two_point_shot_ratio"');
 
 
 -- Popolamento tabella `team` con le squadre della Serie A
