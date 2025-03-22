@@ -33,12 +33,15 @@ model card_settings {
 
 model dashboard {
   dashboard_id   Int              @id @default(autoincrement())
+  card_type_id   String           @db.VarChar(64)
   team_id        Int
   description    String?          @db.Text
+  card_type      card_type        @relation(fields: [card_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_card_type_id")
   team           team             @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dashboard_team_id")
   dashboard_card dashboard_card[]
 
   @@index([team_id], map: "dashboard_team_id")
+  @@index([card_type_id], map: "dashboard_card_type_id")
 }
 
 model dashboard_card {
@@ -337,9 +340,10 @@ model user {
 }
 
 model card_type {
-  id          String  @id @db.VarChar(64)
-  description String? @db.Text
+  id          String      @id @db.VarChar(64)
+  description String?     @db.Text
   card        card[]
+  dashboard   dashboard[]
 }
 
 view v_team_year_league_summary {

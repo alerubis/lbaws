@@ -13,6 +13,7 @@ router.post('/create', wrapAsync(async (req: any, res: any) => {
     const response = await prisma.$transaction(async (tx) => {
         const dashboard = await tx.dashboard.create({
             data: {
+                card_type_id: req.body.card_type_id,
                 description: req.body.description,
                 team_id: req.user.team_id,
             }
