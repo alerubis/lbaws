@@ -273,19 +273,6 @@ CREATE TABLE `sub_play` (
 );
 
 
--- ogni card avrà un tipo che la incasella in una tipologia di analisi, giocatori, partite, squadre o campionati
--- cosi non ci saranno piu problemi di mille filtri da dover applicare
--- anche i grafici simili verranno separati, secondi quarti e partita saranno tre grafici diversi per le categorie giocatori e squadra ognuno con la sua vista.
--- dashboard_card_settings restera e verrà utilizzato per dire quali varaibili della vista bisognerà usare permettendo di rendere tutto parametrrizzabile.
-
--- Quindi ogni card avrà un solo grafico, ogni grafico avrà una vista.
--- Bisognerà permettere all utente di inserire il tipo di dashboard e una volta entrato potra solamente inserire card di quel tipo.
--- I grafici se simili si ripetereanno quindi nel grafico che stiamo facedno ce ne saranno tre (secondi quarto partita) ognuno con il suo grafico e la sua vista .
--- Una volta scelto il grafico l unica variabile che l utente dovrà inserire sarà in questo l asse y(scegliendo sostanzialmente dalle colonne della vista)
-
--- nel campo value di dashboard_card_settings bisognerebbe mettere direttamenti i campi della vista.
-
-
 CREATE TABLE `card_type` (
   `id` varchar(64) NOT NULL,
   `description` text,

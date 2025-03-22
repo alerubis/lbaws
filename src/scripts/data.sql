@@ -18,32 +18,150 @@ INSERT INTO `team` (`name`, `logo_url`) VALUES
 ('Estra Pistoia Basket', 'https://lba-media.s3.eu-south-1.amazonaws.com/CYWVb8hjAugrTtQ9Uu2SZEtF'),
 ('NutriBullet Treviso Basket', 'https://lba-media.s3.eu-south-1.amazonaws.com/5Sxj77afD5Qufy9zifKW1HoB');
 
-INSERT INTO card_type
-(id, description)
-VALUES('PLAYER', 'Card per analisi giocatori');
-INSERT INTO card_type
+
+INSERT INTO lba.card_type
 (id, description)
 VALUES('GAME', 'Card per analisi partite');
-INSERT INTO card_type
+INSERT INTO lba.card_type
+(id, description)
+VALUES('PLAYER', 'Card per analisi giocatori');
+INSERT INTO lba.card_type
 (id, description)
 VALUES('TEAM', 'Card per analisi squadre');
-INSERT INTO card_type
-(id, description)
-VALUES('LEAGUE_YEAR', 'Card per analisi una leghe');
 
-INSERT INTO card
+INSERT INTO lba.card
 (card_id, card_type_id, description)
-VALUES('LPSP', 'PLAYER', 'Area seconds play');
-INSERT INTO card
+VALUES('CALENDAR_PLAYER', 'PLAYER', 'Calendar');
+INSERT INTO lba.card
 (card_id, card_type_id, description)
-VALUES('LTSP', 'TEAM', 'Area seconds play');
+VALUES('CALENDAR_TEAM', 'TEAM', 'Calendar');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('LINE_CONSECUTIVE_MINUTES_PLAYED', 'PLAYER', 'Area consecutive minutes played');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('LINE_GAME_GAME', 'GAME', 'Area minutes game');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('LINE_GAME_PLAYER', 'PLAYER', 'Area minutes game');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('LINE_GAME_TEAM', 'TEAM', 'Area minutes game');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('LINE_MINUTES_PLAYED', 'PLAYER', 'Area minutes played');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('LINE_PLAY_GAME', 'GAME', 'Area seconds play');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('LINE_PLAY_PLAYER', 'PLAYER', 'Area seconds play');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('LINE_PLAY_TEAM', 'TEAM', 'Area seconds play');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('LINE_QUARTER_GAME', 'GAME', 'Area minutes quarter');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('LINE_QUARTER_PLAYER', 'PLAYER', 'Area minutes quarter');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('LINE_QUARTER_TEAM', 'TEAM', 'Area minutes quarter');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('RADAR_PLAYER_GAME', 'GAME', 'Radar');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('RADAR_PLAYER_TEAM', 'TEAM', 'Radar');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('SCATTER_3STAT_TEAM', 'TEAM', 'Scatter team');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('SCATTER_3STAT_GAME', 'GAME', 'Scatter game');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('TABLE_LINEUP_GAME', 'GAME', 'Table lineup');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('TABLE_LINEUP_TEAM', 'TEAM', 'Table lineup');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('TABLE_PLAYER_GAME', 'GAME', 'Table player');
+INSERT INTO lba.card
+(card_id, card_type_id, description)
+VALUES('TABLE_PLAYER_TEAM', 'TEAM', 'Table player');
 
-INSERT INTO card_settings
+INSERT INTO lba.card_settings
 (card_id, setting_id, description, default_value, possible_values)
-VALUES('LPSP', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["two_point_shot_ratio", "three_point_shot_ratio"]');
-INSERT INTO card_settings
+VALUES('LINE_CONSECUTIVE_MINUTES_PLAYED', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
 (card_id, setting_id, description, default_value, possible_values)
-VALUES('LTSP', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["two_point_shot_ratio", "three_point_shot_ratio"]');
+VALUES('LINE_GAME_GAME', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('LINE_GAME_PLAYER', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('LINE_GAME_TEAM', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('LINE_MINUTES_PLAYED', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('LINE_PLAY_GAME', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('LINE_PLAY_PLAYER', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('LINE_PLAY_TEAM', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('LINE_QUARTER_GAME', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('LINE_QUARTER_PLAYER', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('LINE_QUARTER_TEAM', 'Y', 'Asse Y', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('RADAR_PLAYER_GAME', 'STAT', 'Stat', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('RADAR_PLAYER_TEAM', 'STAT', 'Stat', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('SCATTER_3STAT_TEAM', '1', '1', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('SCATTER_3STAT_TEAM', '2', '2', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('SCATTER_3STAT_TEAM', '3', '3', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('SCATTER_3STAT_GAME', '1', '1', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('SCATTER_3STAT_GAME', '2', '2', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('SCATTER_3STAT_GAME', '3', '3', '"three_point_shot_ratio"', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('TABLE_LINEUP_GAME', 'STAT', 'Stat', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('TABLE_LINEUP_TEAM', 'STAT', 'Stat', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('TABLE_PLAYER_GAME', 'STAT', 'Stat', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
+INSERT INTO lba.card_settings
+(card_id, setting_id, description, default_value, possible_values)
+VALUES('TABLE_PLAYER_TEAM', 'STAT', 'Stat', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]', '["one_point_shots_made", "one_point_shots_miss", "two_point_shots_made", "two_point_shots_miss", "three_point_shots_made", "three_point_shots_miss", "one_point_shot_ratio", "two_point_shot_ratio", "three_point_shot_ratio"]');
 
 INSERT INTO dashboard
 (dashboard_id, card_type_id, team_id, description)
