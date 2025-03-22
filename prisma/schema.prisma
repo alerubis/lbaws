@@ -103,6 +103,8 @@ model game {
   type_game_id                       Int
   team_home_id                       Int
   team_guest_id                      Int
+  team_home_points                   Int?
+  team_guest_points                  Int?
   date_hours_utc                     BigInt?
   referee_1_id                       Int
   referee_2_id                       Int
@@ -267,6 +269,7 @@ model sub_play {
 model team {
   id                            Int                @id @default(autoincrement())
   name                          String             @db.VarChar(64)
+  logo_url                      String             @db.VarChar(1024)
   dashboard                     dashboard[]
   game_game_team_guest_idToteam game[]             @relation("game_team_guest_idToteam")
   game_game_team_home_idToteam  game[]             @relation("game_team_home_idToteam")

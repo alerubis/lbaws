@@ -9,6 +9,7 @@ use lba;
 CREATE TABLE `team` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL,
+  `logo_url` varchar(1024) NOT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -88,6 +89,8 @@ CREATE TABLE `game` (
   `type_game_id` int NOT NULL,
   `team_home_id` int NOT NULL,
   `team_guest_id` int NOT NULL,
+  `team_home_points` int,
+  `team_guest_points` int,
   `date_hours_utc` bigint,
   `referee_1_id` int NOT NULL,
   `referee_2_id` int NOT NULL,

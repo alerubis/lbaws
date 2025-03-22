@@ -4,6 +4,11 @@ import express from 'express';
 import cardRoutes from './auto/card-routes';
 import cardSetttingsRoutes from './auto/card_settings-routes';
 import dashboardCardSettingsRoutes from './auto/dashboard_card_settings-routes';
+import gameRoutes from './auto/game-routes';
+import league_yearRoutes from './auto/league_year-routes';
+import leagueRoutes from './auto/league-routes';
+import refereeRoutes from './auto/referee-routes';
+import teamRoutes from './auto/team-routes';
 import v_player_year_league_summary_minute_game_routes from './auto/v_player_year_league_summary_minute_game-routes';
 import v_player_year_league_summary_minute_quarter_routes from './auto/v_player_year_league_summary_minute_quarter-routes';
 import v_player_year_league_summary_seconds_play_routes from './auto/v_player_year_league_summary_seconds_play-routes';
@@ -20,9 +25,14 @@ import dashboardCardRoutes from './custom/dashboard_card-routes';
 const router = express.Router();
 
 // Auto
-router.use('/card', cardRoutes);
 router.use('/card_settings', cardSetttingsRoutes);
+router.use('/card', cardRoutes);
 router.use('/dashboard_card_settings', dashboardCardSettingsRoutes);
+router.use('/game', gameRoutes);
+router.use('/league_year', league_yearRoutes);
+router.use('/league', leagueRoutes);
+router.use('/referee', refereeRoutes);
+router.use('/team', teamRoutes);
 
 router.use('/v_player_year_league_summary_minute_game', v_player_year_league_summary_minute_game_routes);
 router.use('/v_player_year_league_summary_minute_quarter', v_player_year_league_summary_minute_quarter_routes);

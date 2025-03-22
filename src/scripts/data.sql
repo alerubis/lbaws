@@ -20,23 +20,23 @@ INSERT INTO card_settings (card_id, setting_id, description, default_value, poss
 
 
 -- Popolamento tabella `team` con le squadre della Serie A
-INSERT INTO `team` (`name`) VALUES
-('EA7 Emporio Armani Milano'),
-('Virtus Segafredo Bologna'),
-('Umana Reyer Venezia'),
-('Dolomiti Energia Trentino'),
-('Germani Brescia'),
-('Banco di Sardegna Sassari'),
-('Happy Casa Brindisi'),
-('Carpegna Prosciutto Pesaro'),
-('Openjobmetis Varese'),
-('UNAHOTELS Reggio Emilia'),
-('Bertram Yachts Derthona Tortona'),
-('Givova Scafati'),
-('Pallacanestro Trieste'),
-('Vanoli Basket Cremona'),
-('Estra Pistoia Basket'),
-('NutriBullet Treviso Basket');
+INSERT INTO `team` (`name`, `logo_url`) VALUES
+('EA7 Emporio Armani Milano', 'https://lba-media.s3.eu-south-1.amazonaws.com/3foUZjx8QLznxMz1ZYDdqoWH'),
+('Virtus Segafredo Bologna', 'https://lba-media.s3.eu-south-1.amazonaws.com/f1wqLAuPXWrvRrQnZb9CxFN1'),
+('Umana Reyer Venezia', 'https://lba-media.s3.eu-south-1.amazonaws.com/QHN2KbVQQpDgGwT7CYrGciek'),
+('Dolomiti Energia Trentino', 'https://lba-media.s3.eu-south-1.amazonaws.com/s5EcVfJudL9hL8RTCtYrhsYz'),
+('Germani Brescia', 'https://lba-media.s3.eu-south-1.amazonaws.com/FbjnjNui3pJii4UoTUHJsoWr'),
+('Banco di Sardegna Sassari', 'https://lba-media.s3.eu-south-1.amazonaws.com/ZdDK2bEpxmZngCshUBrtDZKi'),
+('Happy Casa Brindisi', 'https://lba-media.s3.eu-south-1.amazonaws.com/9MxckBSz3B7iD1E5oxUmyXbA'),
+('Carpegna Prosciutto Pesaro', 'https://lba-media.s3.eu-south-1.amazonaws.com/WvGYhjeQEb7H8zNZGncpCFiL'),
+('Openjobmetis Varese', 'https://lba-media.s3.eu-south-1.amazonaws.com/LbsfVfYPLfc48uRV4DYtZHpJ'),
+('UNAHOTELS Reggio Emilia', 'https://lba-media.s3.eu-south-1.amazonaws.com/QJYDAWxPLKk3a4noAz67J3jq'),
+('Bertram Yachts Derthona Tortona', 'https://lba-media.s3.eu-south-1.amazonaws.com/LwweSUMoSmT3UfbQ5RHL4i3c'),
+('Givova Scafati', 'https://lba-media.s3.eu-south-1.amazonaws.com/jpF39uNp5E4EcWcSWSDYt1pb'),
+('Pallacanestro Trieste', 'https://lba-media.s3.eu-south-1.amazonaws.com/fG1iaynEv5fKwTqJAjaLy5aX'),
+('Vanoli Basket Cremona', 'https://lba-media.s3.eu-south-1.amazonaws.com/JnqS2vY6pzamCQnXkNAyn5pW'),
+('Estra Pistoia Basket', 'https://lba-media.s3.eu-south-1.amazonaws.com/CYWVb8hjAugrTtQ9Uu2SZEtF'),
+('NutriBullet Treviso Basket', 'https://lba-media.s3.eu-south-1.amazonaws.com/5Sxj77afD5Qufy9zifKW1HoB');
 
 INSERT INTO user (`username`, `password`, `team_id`) VALUES('ale', 'ale', 1);
 INSERT INTO user (`username`, `password`, `team_id`) VALUES('test', 'test', 1);
@@ -460,86 +460,86 @@ INSERT INTO `dz_turnover` (`description`) VALUES
 ('Violazione di tempo');
 
 -- Creazione partite, 10 giornate
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 15,3, 1725222600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 16,6, 1725222600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 7,2, 1725222600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 14,1, 1725222600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,13, 1725222600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 11,9, 1725222600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 8,4, 1725222600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 5,12, 1725222600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 13,15, 1725827400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 7,16, 1725827400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 4,11, 1725827400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 8,5, 1725827400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 6,14, 1725827400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,1, 1725827400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 2,12, 1725827400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 3,9, 1725827400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 6,7, 1726432200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 5,9, 1726432200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 12,13, 1726432200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,14, 1726432200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 16,2, 1726432200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 11,3, 1726432200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 8,1, 1726432200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 15,4, 1726432200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,15, 1727037000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 5,7, 1727037000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 16,1, 1727037000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 11,8, 1727037000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 4,2, 1727037000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 9,6, 1727037000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 13,3, 1727037000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 14,12, 1727037000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 6,12, 1727641800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 11,14, 1727641800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,4, 1727641800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 3,16, 1727641800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 8,7, 1727641800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 9,13, 1727641800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 15,5, 1727641800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 1,2, 1727641800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,9, 1728246600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 14,8, 1728246600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 3,1, 1728246600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 12,16, 1728246600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 13,11, 1728246600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 7,4, 1728246600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 6,15, 1728246600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 2,5, 1728246600, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 14,9, 1728851400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 7,12, 1728851400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 2,6, 1728851400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 15,1, 1728851400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 4,13, 1728851400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 5,11, 1728851400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 8,16, 1728851400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 3,10, 1728851400, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 12,1, 1729456200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 3,4, 1729456200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 9,2, 1729456200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 13,8, 1729456200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 11,15, 1729456200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,6, 1729456200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 7,14, 1729456200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 16,5, 1729456200, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 14,16, 1730061000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 3,12, 1730061000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,7, 1730061000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 2,8, 1730061000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 4,5, 1730061000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 9,15, 1730061000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 1,11, 1730061000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 6,13, 1730061000, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 11,12, 1730665800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 13,2, 1730665800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 14,5, 1730665800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 6,4, 1730665800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 1,9, 1730665800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 7,3, 1730665800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 16,10, 1730665800, 1, 2, 3);
-INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 8,15, 1730665800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 15,3, 89,102, 1725222600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 16,6, 89,102, 1725222600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 7,2, 89,102, 1725222600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 14,1, 89,102, 1725222600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,13, 89,102, 1725222600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 11,9, 89,102, 1725222600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 8,4, 89,102, 1725222600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 5,12, 89,102, 1725222600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 13,15, 89,102, 1725827400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 7,16, 89,102, 1725827400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 4,11, 89,102, 1725827400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 8,5, 89,102, 1725827400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 6,14, 89,102, 1725827400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,1, 89,102, 1725827400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 2,12, 89,102, 1725827400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 3,9, 89,102, 1725827400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 6,7, 89,102, 1726432200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 5,9, 89,102, 1726432200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 12,13, 89,102, 1726432200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,14, 89,102, 1726432200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 16,2, 89,102, 1726432200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 11,3, 89,102, 1726432200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 8,1, 89,102, 1726432200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 15,4, 89,102, 1726432200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,15, 89,102, 1727037000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 5,7, 89,102, 1727037000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 16,1, 89,102, 1727037000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 11,8, 89,102, 1727037000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 4,2, 89,102, 1727037000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 9,6, 89,102, 1727037000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 13,3, 89,102, 1727037000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 14,12, 89,102, 1727037000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 6,12, 89,102, 1727641800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 11,14, 89,102, 1727641800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,4, 89,102, 1727641800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 3,16, 89,102, 1727641800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 8,7, 89,102, 1727641800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 9,13, 89,102, 1727641800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 15,5, 89,102, 1727641800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 1,2, 89,102, 1727641800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,9, 89,102, 1728246600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 14,8, 89,102, 1728246600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 3,1, 89,102, 1728246600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 12,16, 89,102, 1728246600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 13,11, 89,102, 1728246600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 7,4, 89,102, 1728246600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 6,15, 89,102, 1728246600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 2,5, 89,102, 1728246600, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 14,9, 89,102, 1728851400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 7,12, 89,102, 1728851400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 2,6, 89,102, 1728851400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 15,1, 89,102, 1728851400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 4,13, 89,102, 1728851400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 5,11, 89,102, 1728851400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 8,16, 89,102, 1728851400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 3,10, 89,102, 1728851400, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 12,1, 89,102, 1729456200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 3,4, 89,102, 1729456200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 9,2, 89,102, 1729456200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 13,8, 89,102, 1729456200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 11,15, 89,102, 1729456200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,6, 89,102, 1729456200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 7,14, 89,102, 1729456200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 16,5, 89,102, 1729456200, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 14,16, 89,102, 1730061000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 3,12, 89,102, 1730061000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 10,7, 89,102, 1730061000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 2,8, 89,102, 1730061000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 4,5, 89,102, 1730061000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 9,15, 89,102, 1730061000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 1,11, 89,102, 1730061000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 6,13, 89,102, 1730061000, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 11,12, 89,102, 1730665800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 13,2, 89,102, 1730665800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 14,5, 89,102, 1730665800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 6,4, 89,102, 1730665800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 1,9, 89,102, 1730665800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 7,3, 89,102, 1730665800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 16,10, 89,102, 1730665800, 1, 2, 3);
+INSERT INTO `game` (`league_year_id`, `type_game_id`, `team_home_id`, `team_guest_id`, `team_home_points`, `team_guest_points`, `date_hours_utc`, `referee_1_id`, `referee_2_id`, `referee_3_id`)VALUES (1, 1, 8,15, 89,102, 1730665800, 1, 2, 3);
 
 -- popola i giocatori delle partite, mette tutti i giocatori della squadra
 INSERT INTO player_team_game (player_id, team_id, game_id)
