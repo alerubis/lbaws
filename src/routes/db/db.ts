@@ -22,6 +22,7 @@ import v_team_year_league_summary_routes from './auto/v_team_year_league_summary
 // Custom
 import dashboardRoutes from './custom/dashboard-routes';
 import dashboardCardRoutes from './custom/dashboard_card-routes';
+import playerRoutes from './auto/player-routes';
 
 const router = express.Router();
 
@@ -36,6 +37,7 @@ router.use('/league_year', league_yearRoutes);
 router.use('/league', leagueRoutes);
 router.use('/referee', refereeRoutes);
 router.use('/team', teamRoutes);
+router.use('/player', playerRoutes);
 
 router.use('/v_player_year_league_summary_minute_game', v_player_year_league_summary_minute_game_routes);
 router.use('/v_player_year_league_summary_minute_quarter', v_player_year_league_summary_minute_quarter_routes);

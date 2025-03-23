@@ -173,6 +173,7 @@ model player {
   id               Int                @id @default(autoincrement())
   name             String             @db.VarChar(64)
   surname          String             @db.VarChar(64)
+  logo_url         String?            @db.VarChar(1024)
   height           Int?
   year             Int?
   player_team      player_team[]

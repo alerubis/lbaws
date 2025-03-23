@@ -33,6 +33,7 @@ CREATE TABLE `player` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL,
   `surname` varchar(64) NOT NULL,
+  `logo_url` varchar(1024) NOT NULL,
   `height` int default NULL,
   `year` int default NULL,
   PRIMARY KEY (`id`)
