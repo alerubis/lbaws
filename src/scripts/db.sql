@@ -225,12 +225,6 @@ CREATE TABLE `dz_foul` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `dz_infraction` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `description` varchar(64) NOT NULL,
-  PRIMARY KEY (`id`)
-);
-
 CREATE TABLE `dz_turnover` (
   `id` int NOT NULL AUTO_INCREMENT,
   `description` varchar(64) NOT NULL,
@@ -255,7 +249,6 @@ CREATE TABLE `sub_play` (
   `shot_id` int default NULL,
   `turnover_id` int default NULL,
   `foul_id` int default NULL,
-  `infraction_id` int default NULL,
   `rebound_defensive_01` varchar(1) default NULL,
   `rebound_offensive_01` varchar(1) default NULL,
   `assist_01` varchar(1) default NULL,
@@ -269,8 +262,7 @@ CREATE TABLE `sub_play` (
   CONSTRAINT `sub_play_play_id` FOREIGN KEY (`play_id`) REFERENCES `play` (`id`),
   CONSTRAINT `sub_play_shot_id` FOREIGN KEY (`shot_id`) REFERENCES `dz_shot` (`id`),
   CONSTRAINT `sub_play_turnover_id` FOREIGN KEY (`turnover_id`) REFERENCES `dz_turnover` (`id`),
-  CONSTRAINT `sub_play_foul_id` FOREIGN KEY (`foul_id`) REFERENCES `dz_foul` (`id`),
-  CONSTRAINT `sub_play_infraction_id` FOREIGN KEY (`infraction_id`) REFERENCES `dz_infraction` (`id`)
+  CONSTRAINT `sub_play_foul_id` FOREIGN KEY (`foul_id`) REFERENCES `dz_foul` (`id`)
 );
 
 
