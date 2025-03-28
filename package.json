@@ -10,7 +10,8 @@
     "prisma-pull": "prisma db pull && prisma generate",
     "routes-generator": "ts-node src/scripts/routes-generator.ts src/routes/db/auto",
     "types-generator": "ts-node src/scripts/types-generator.ts ../lba/src/app/shared/types/db/auto",
-    "refresh-persistent": "npm run prisma-pull && npm run routes-generator && npm run types-generator"
+    "refresh-persistent": "npm run prisma-pull && npm run routes-generator && npm run types-generator",
+    "data-import": "ts-node src/scripts/data-import.ts"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +30,8 @@
     "@types/express": "^5.0.0",
     "@types/lodash": "^4.17.16",
     "@types/node": "^22.10.7",
+    "axios": "^1.8.4",
+    "inquirer": "^12.5.0",
     "nodemon": "^3.1.9",
     "prisma": "^6.4.1",
     "ts-node": "^10.9.2",
