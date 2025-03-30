@@ -80,12 +80,6 @@ model dz_foul {
   sub_play    sub_play[]
 }
 
-model dz_infraction {
-  id          Int        @id @default(autoincrement())
-  description String     @db.VarChar(64)
-  sub_play    sub_play[]
-}
-
 model dz_shot {
   id          Int        @id @default(autoincrement())
   description String     @db.VarChar(64)
@@ -173,7 +167,7 @@ model player {
   id               Int                @id @default(autoincrement())
   name             String             @db.VarChar(64)
   surname          String             @db.VarChar(64)
-  logo_url         String?            @db.VarChar(1024)
+  logo_url         String             @db.VarChar(1024)
   height           Int?
   year             Int?
   player_team      player_team[]
@@ -245,7 +239,6 @@ model sub_play {
   shot_id                                                                                                            Int?
   turnover_id                                                                                                        Int?
   foul_id                                                                                                            Int?
-  infraction_id                                                                                                      Int?
   rebound_defensive_01                                                                                               String?                @db.VarChar(1)
   rebound_offensive_01                                                                                               String?                @db.VarChar(1)
   assist_01                                                                                                          String?                @db.VarChar(1)
@@ -254,7 +247,6 @@ model sub_play {
   x                                                                                                                  Int?
   y                                                                                                                  Int?
   dz_foul                                                                                                            dz_foul?               @relation(fields: [foul_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sub_play_foul_id")
-  dz_infraction                                                                                                      dz_infraction?         @relation(fields: [infraction_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sub_play_infraction_id")
   play                                                                                                               play                   @relation(fields: [play_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sub_play_play_id")
   player_team_game_play_sub_play_player_made_id_team_made_id_game_made_id_play_idToplayer_team_game_play             player_team_game_play? @relation("sub_play_player_made_id_team_made_id_game_made_id_play_idToplayer_team_game_play", fields: [player_made_id, team_made_id, game_made_id, play_id], references: [player_id, team_id, game_id, play_id], onDelete: NoAction, onUpdate: NoAction, map: "sub_play_player_made_id_team_made_id_game_fat")
   player_team_game_play_sub_play_player_suffered_id_team_suffered_id_game_suffered_id_play_idToplayer_team_game_play player_team_game_play? @relation("sub_play_player_suffered_id_team_suffered_id_game_suffered_id_play_idToplayer_team_game_play", fields: [player_suffered_id, team_suffered_id, game_suffered_id, play_id], references: [player_id, team_id, game_id, play_id], onDelete: NoAction, onUpdate: NoAction, map: "sub_play_player_suffered_id_team_suffered_id_game_sub")
@@ -265,7 +257,6 @@ model sub_play {
   @@index([player_made_id, team_made_id, game_made_id, play_id], map: "sub_play_player_made_id_team_made_id_game_fat")
   @@index([player_suffered_id, team_suffered_id, game_suffered_id, play_id], map: "sub_play_player_suffered_id_team_suffered_id_game_sub")
   @@index([foul_id], map: "sub_play_foul_id")
-  @@index([infraction_id], map: "sub_play_infraction_id")
   @@index([shot_id], map: "sub_play_shot_id")
   @@index([turnover_id], map: "sub_play_turnover_id")
 }
@@ -347,225 +338,184 @@ model card_type {
   dashboard   dashboard[]
 }
 
-view v_team_year_league_summary {
-  team_id                  Int      @id @default(0)
-  team_name                String   @db.VarChar(64)
-  league_year_id           Int      @default(0)
-  league_id                Int      @default(0)
-  league_name              String   @db.VarChar(64)
-  total_sub_plays          BigInt   @default(0)
-  total_shots              Decimal? @db.Decimal(23, 0)
-  one_point_shots_made     Decimal? @db.Decimal(23, 0)
-  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  two_point_shots_made     Decimal? @db.Decimal(23, 0)
-  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  three_point_shots_made   Decimal? @db.Decimal(23, 0)
-  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
-  one_point_shot_perc      Decimal? @db.Decimal(27, 4)
-  two_point_shot_perc      Decimal? @db.Decimal(27, 4)
-  three_point_shot_perc    Decimal? @db.Decimal(27, 4)
-  total_fouls              Decimal? @db.Decimal(23, 0)
-  total_infractions        Decimal? @db.Decimal(23, 0)
-  total_turnovers          Decimal? @db.Decimal(23, 0)
-  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_assists            Decimal? @db.Decimal(23, 0)
-  total_blocks             Decimal? @db.Decimal(23, 0)
-  total_timeouts           Decimal? @db.Decimal(23, 0)
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_player_game_absolute_minute_boxscore {
+  player_id       Int      @id
+  game_id         Int
+  player_name     String   @db.VarChar(64)
+  player_surname  String   @db.VarChar(64)
+  team_name       String   @db.VarChar(64)
+  type_game_id    Int
+  league_year_id  Int
+  league_id       Int
+  absolute_minute BigInt?
+  fouls_committed Decimal? @db.Decimal(42, 0)
+  fouls_received  Decimal? @db.Decimal(42, 0)
+  points          Decimal? @db.Decimal(54, 0)
+  made_2pt        Decimal? @db.Decimal(45, 0)
+  missed_2pt      Decimal? @db.Decimal(45, 0)
+  pct_2pt         Decimal? @db.Decimal(50, 1)
+  made_3pt        Decimal? @db.Decimal(45, 0)
+  missed_3pt      Decimal? @db.Decimal(45, 0)
+  pct_3pt         Decimal? @db.Decimal(50, 1)
+  made_ft         Decimal? @db.Decimal(45, 0)
+  missed_ft       Decimal? @db.Decimal(45, 0)
+  pct_ft          Decimal? @db.Decimal(50, 1)
+  off_reb         Decimal? @db.Decimal(42, 0)
+  def_reb         Decimal? @db.Decimal(42, 0)
+  blocks_made     Decimal? @db.Decimal(42, 0)
+  blocks_suffered Decimal? @db.Decimal(42, 0)
+  turnovers       Decimal? @db.Decimal(42, 0)
+  steals          Decimal? @db.Decimal(42, 0)
+  assists         Decimal? @db.Decimal(42, 0)
 }
 
-view v_team_year_league_summary_seconds_play {
-  team_id                  Int      @id @default(0)
-  team_name                String   @db.VarChar(64)
-  league_year_id           Int      @default(0)
-  league_id                Int      @default(0)
-  league_name              String   @db.VarChar(64)
-  second_in_play           Int?
-  total_sub_plays          BigInt   @default(0)
-  total_shots              Decimal? @db.Decimal(23, 0)
-  one_point_shots_made     Decimal? @db.Decimal(23, 0)
-  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  two_point_shots_made     Decimal? @db.Decimal(23, 0)
-  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  three_point_shots_made   Decimal? @db.Decimal(23, 0)
-  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
-  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
-  total_fouls              Decimal? @db.Decimal(23, 0)
-  total_infractions        Decimal? @db.Decimal(23, 0)
-  total_turnovers          Decimal? @db.Decimal(23, 0)
-  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_assists            Decimal? @db.Decimal(23, 0)
-  total_blocks             Decimal? @db.Decimal(23, 0)
-  total_timeouts           Decimal? @db.Decimal(23, 0)
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_player_game_minute_boxscore {
+  player_id       Int      @id
+  game_id         Int
+  minute          BigInt?
+  fouls_committed BigInt   @default(0)
+  fouls_received  BigInt   @default(0)
+  points          Decimal? @db.Decimal(32, 0)
+  made_2pt        Decimal? @db.Decimal(23, 0)
+  missed_2pt      Decimal? @db.Decimal(23, 0)
+  pct_2pt         Decimal? @db.Decimal(28, 1)
+  made_3pt        Decimal? @db.Decimal(23, 0)
+  missed_3pt      Decimal? @db.Decimal(23, 0)
+  pct_3pt         Decimal? @db.Decimal(28, 1)
+  made_ft         Decimal? @db.Decimal(23, 0)
+  missed_ft       Decimal? @db.Decimal(23, 0)
+  pct_ft          Decimal? @db.Decimal(28, 1)
+  off_reb         BigInt   @default(0)
+  def_reb         BigInt   @default(0)
+  blocks_made     BigInt   @default(0)
+  blocks_suffered BigInt   @default(0)
+  turnovers       BigInt   @default(0)
+  steals          BigInt   @default(0)
+  assists         BigInt   @default(0)
+  player_name     String   @db.VarChar(64)
+  player_surname  String   @db.VarChar(64)
+  team_name       String   @db.VarChar(64)
+  type_game_id    Int
+  league_year_id  Int
+  league_id       Int
 }
 
-view v_team_year_league_summary_minutes_quarter {
-  team_id                  Int      @id @default(0)
-  team_name                String   @db.VarChar(64)
-  league_year_id           Int      @default(0)
-  league_id                Int      @default(0)
-  league_name              String   @db.VarChar(64)
-  minute_in_quarter        BigInt?
-  total_sub_plays          BigInt   @default(0)
-  total_shots              Decimal? @db.Decimal(23, 0)
-  one_point_shots_made     Decimal? @db.Decimal(23, 0)
-  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  two_point_shots_made     Decimal? @db.Decimal(23, 0)
-  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  three_point_shots_made   Decimal? @db.Decimal(23, 0)
-  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
-  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
-  total_fouls              Decimal? @db.Decimal(23, 0)
-  total_infractions        Decimal? @db.Decimal(23, 0)
-  total_turnovers          Decimal? @db.Decimal(23, 0)
-  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_assists            Decimal? @db.Decimal(23, 0)
-  total_blocks             Decimal? @db.Decimal(23, 0)
-  total_timeouts           Decimal? @db.Decimal(23, 0)
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_player_game_minute_boxscore_base {
+  player_id       Int      @id
+  game_id         Int
+  minute          BigInt?
+  fouls_committed BigInt   @default(0)
+  fouls_received  BigInt   @default(0)
+  points          Decimal? @db.Decimal(32, 0)
+  made_2pt        Decimal? @db.Decimal(23, 0)
+  missed_2pt      Decimal? @db.Decimal(23, 0)
+  pct_2pt         Decimal? @db.Decimal(28, 1)
+  made_3pt        Decimal? @db.Decimal(23, 0)
+  missed_3pt      Decimal? @db.Decimal(23, 0)
+  pct_3pt         Decimal? @db.Decimal(28, 1)
+  made_ft         Decimal? @db.Decimal(23, 0)
+  missed_ft       Decimal? @db.Decimal(23, 0)
+  pct_ft          Decimal? @db.Decimal(28, 1)
+  off_reb         BigInt   @default(0)
+  def_reb         BigInt   @default(0)
+  blocks_made     BigInt   @default(0)
+  blocks_suffered BigInt   @default(0)
+  turnovers       BigInt   @default(0)
+  steals          BigInt   @default(0)
+  assists         BigInt   @default(0)
 }
 
-view v_team_year_league_summary_minutes_game {
-  team_id                  Int      @id @default(0)
-  team_name                String   @db.VarChar(64)
-  league_year_id           Int      @default(0)
-  league_id                Int      @default(0)
-  league_name              String   @db.VarChar(64)
-  minute_in_game           BigInt?
-  total_sub_plays          BigInt   @default(0)
-  total_shots              Decimal? @db.Decimal(23, 0)
-  one_point_shots_made     Decimal? @db.Decimal(23, 0)
-  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  two_point_shots_made     Decimal? @db.Decimal(23, 0)
-  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  three_point_shots_made   Decimal? @db.Decimal(23, 0)
-  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
-  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
-  total_fouls              Decimal? @db.Decimal(23, 0)
-  total_infractions        Decimal? @db.Decimal(23, 0)
-  total_turnovers          Decimal? @db.Decimal(23, 0)
-  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_assists            Decimal? @db.Decimal(23, 0)
-  total_blocks             Decimal? @db.Decimal(23, 0)
-  total_timeouts           Decimal? @db.Decimal(23, 0)
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_player_game_total_boxscore {
+  player_id       Int      @id
+  game_id         Int
+  player_name     String   @db.VarChar(64)
+  player_surname  String   @db.VarChar(64)
+  team_name       String   @db.VarChar(64)
+  type_game_id    Int
+  league_year_id  Int
+  league_id       Int
+  fouls_committed Decimal? @db.Decimal(42, 0)
+  fouls_received  Decimal? @db.Decimal(42, 0)
+  points          Decimal? @db.Decimal(54, 0)
+  made_2pt        Decimal? @db.Decimal(45, 0)
+  missed_2pt      Decimal? @db.Decimal(45, 0)
+  pct_2pt         Decimal? @db.Decimal(50, 1)
+  made_3pt        Decimal? @db.Decimal(45, 0)
+  missed_3pt      Decimal? @db.Decimal(45, 0)
+  pct_3pt         Decimal? @db.Decimal(50, 1)
+  made_ft         Decimal? @db.Decimal(45, 0)
+  missed_ft       Decimal? @db.Decimal(45, 0)
+  pct_ft          Decimal? @db.Decimal(50, 1)
+  off_reb         Decimal? @db.Decimal(42, 0)
+  def_reb         Decimal? @db.Decimal(42, 0)
+  blocks_made     Decimal? @db.Decimal(42, 0)
+  blocks_suffered Decimal? @db.Decimal(42, 0)
+  turnovers       Decimal? @db.Decimal(42, 0)
+  steals          Decimal? @db.Decimal(42, 0)
+  assists         Decimal? @db.Decimal(42, 0)
 }
 
-view v_player_year_league_summary {
-  player_id                Int      @id @default(0)
-  player_name              String   @db.VarChar(64)
-  player_surname           String   @db.VarChar(64)
-  league_year_id           Int      @default(0)
-  league_id                Int      @default(0)
-  league_name              String   @db.VarChar(64)
-  total_sub_plays          BigInt   @default(0)
-  total_shots              Decimal? @db.Decimal(23, 0)
-  one_point_shots_made     Decimal? @db.Decimal(23, 0)
-  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  two_point_shots_made     Decimal? @db.Decimal(23, 0)
-  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  three_point_shots_made   Decimal? @db.Decimal(23, 0)
-  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
-  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
-  total_fouls              Decimal? @db.Decimal(23, 0)
-  total_infractions        Decimal? @db.Decimal(23, 0)
-  total_turnovers          Decimal? @db.Decimal(23, 0)
-  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_assists            Decimal? @db.Decimal(23, 0)
-  total_blocks             Decimal? @db.Decimal(23, 0)
-  total_timeouts           Decimal? @db.Decimal(23, 0)
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_player_season_avg_boxscore {
+  player_id       Int      @id
+  player_name     String   @db.VarChar(64)
+  player_surname  String   @db.VarChar(64)
+  team_name       String   @db.VarChar(64)
+  league_year_id  Int
+  league_id       Int
+  games           BigInt   @default(0)
+  fouls_committed Decimal? @db.Decimal(64, 2)
+  fouls_received  Decimal? @db.Decimal(64, 2)
+  points          Decimal? @db.Decimal(64, 2)
+  made_2pt        Decimal? @db.Decimal(64, 2)
+  missed_2pt      Decimal? @db.Decimal(64, 2)
+  pct_2pt         Decimal? @db.Decimal(62, 1)
+  made_3pt        Decimal? @db.Decimal(64, 2)
+  missed_3pt      Decimal? @db.Decimal(64, 2)
+  pct_3pt         Decimal? @db.Decimal(62, 1)
+  made_ft         Decimal? @db.Decimal(64, 2)
+  missed_ft       Decimal? @db.Decimal(64, 2)
+  pct_ft          Decimal? @db.Decimal(62, 1)
+  off_reb         Decimal? @db.Decimal(64, 2)
+  def_reb         Decimal? @db.Decimal(64, 2)
+  blocks_made     Decimal? @db.Decimal(64, 2)
+  blocks_suffered Decimal? @db.Decimal(64, 2)
+  turnovers       Decimal? @db.Decimal(64, 2)
+  steals          Decimal? @db.Decimal(64, 2)
+  assists         Decimal? @db.Decimal(64, 2)
 }
 
-view v_player_year_league_summary_seconds_play {
-  player_id                Int      @id @default(0)
-  player_name              String   @db.VarChar(64)
-  league_year_id           Int      @default(0)
-  league_id                Int      @default(0)
-  league_name              String   @db.VarChar(64)
-  second_in_play           Int?
-  total_sub_plays          BigInt   @default(0)
-  total_shots              Decimal? @db.Decimal(23, 0)
-  one_point_shots_made     Decimal? @db.Decimal(23, 0)
-  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  two_point_shots_made     Decimal? @db.Decimal(23, 0)
-  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  three_point_shots_made   Decimal? @db.Decimal(23, 0)
-  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
-  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
-  total_fouls              Decimal? @db.Decimal(23, 0)
-  total_infractions        Decimal? @db.Decimal(23, 0)
-  total_turnovers          Decimal? @db.Decimal(23, 0)
-  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_assists            Decimal? @db.Decimal(23, 0)
-  total_blocks             Decimal? @db.Decimal(23, 0)
-  total_timeouts           Decimal? @db.Decimal(23, 0)
-}
-
-view v_player_year_league_summary_minute_quarter {
-  player_id                Int      @id @default(0)
-  player_name              String   @db.VarChar(64)
-  league_year_id           Int      @default(0)
-  league_id                Int      @default(0)
-  league_name              String   @db.VarChar(64)
-  minute_in_quarter        BigInt?
-  total_sub_plays          BigInt   @default(0)
-  total_shots              Decimal? @db.Decimal(23, 0)
-  one_point_shots_made     Decimal? @db.Decimal(23, 0)
-  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  two_point_shots_made     Decimal? @db.Decimal(23, 0)
-  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  three_point_shots_made   Decimal? @db.Decimal(23, 0)
-  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
-  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
-  total_fouls              Decimal? @db.Decimal(23, 0)
-  total_infractions        Decimal? @db.Decimal(23, 0)
-  total_turnovers          Decimal? @db.Decimal(23, 0)
-  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_assists            Decimal? @db.Decimal(23, 0)
-  total_blocks             Decimal? @db.Decimal(23, 0)
-  total_timeouts           Decimal? @db.Decimal(23, 0)
-}
-
-view v_player_year_league_summary_minute_game {
-  player_id                Int      @id @default(0)
-  player_name              String   @db.VarChar(64)
-  league_year_id           Int      @default(0)
-  league_id                Int      @default(0)
-  league_name              String   @db.VarChar(64)
-  minute_in_game           BigInt?
-  total_sub_plays          BigInt   @default(0)
-  total_shots              Decimal? @db.Decimal(23, 0)
-  one_point_shots_made     Decimal? @db.Decimal(23, 0)
-  one_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  two_point_shots_made     Decimal? @db.Decimal(23, 0)
-  two_point_shots_miss     Decimal? @db.Decimal(23, 0)
-  three_point_shots_made   Decimal? @db.Decimal(23, 0)
-  three_point_shots_miss   Decimal? @db.Decimal(23, 0)
-  one_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  two_point_shot_ratio     Decimal? @db.Decimal(27, 4)
-  three_point_shot_ratio   Decimal? @db.Decimal(27, 4)
-  total_fouls              Decimal? @db.Decimal(23, 0)
-  total_infractions        Decimal? @db.Decimal(23, 0)
-  total_turnovers          Decimal? @db.Decimal(23, 0)
-  total_defensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_offensive_rebounds Decimal? @db.Decimal(23, 0)
-  total_assists            Decimal? @db.Decimal(23, 0)
-  total_blocks             Decimal? @db.Decimal(23, 0)
-  total_timeouts           Decimal? @db.Decimal(23, 0)
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_player_season_game_type_avg_boxscore {
+  player_id       Int      @id
+  player_name     String   @db.VarChar(64)
+  player_surname  String   @db.VarChar(64)
+  team_name       String   @db.VarChar(64)
+  league_year_id  Int
+  league_id       Int
+  type_game_id    Int
+  games           BigInt   @default(0)
+  fouls_committed Decimal? @db.Decimal(64, 2)
+  fouls_received  Decimal? @db.Decimal(64, 2)
+  points          Decimal? @db.Decimal(64, 2)
+  made_2pt        Decimal? @db.Decimal(64, 2)
+  missed_2pt      Decimal? @db.Decimal(64, 2)
+  pct_2pt         Decimal? @db.Decimal(62, 1)
+  made_3pt        Decimal? @db.Decimal(64, 2)
+  missed_3pt      Decimal? @db.Decimal(64, 2)
+  pct_3pt         Decimal? @db.Decimal(62, 1)
+  made_ft         Decimal? @db.Decimal(64, 2)
+  missed_ft       Decimal? @db.Decimal(64, 2)
+  pct_ft          Decimal? @db.Decimal(62, 1)
+  off_reb         Decimal? @db.Decimal(64, 2)
+  def_reb         Decimal? @db.Decimal(64, 2)
+  blocks_made     Decimal? @db.Decimal(64, 2)
+  blocks_suffered Decimal? @db.Decimal(64, 2)
+  turnovers       Decimal? @db.Decimal(64, 2)
+  steals          Decimal? @db.Decimal(64, 2)
+  assists         Decimal? @db.Decimal(64, 2)
 }

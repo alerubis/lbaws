@@ -10,14 +10,12 @@ import league_yearRoutes from './auto/league_year-routes';
 import leagueRoutes from './auto/league-routes';
 import refereeRoutes from './auto/referee-routes';
 import teamRoutes from './auto/team-routes';
-import v_player_year_league_summary_minute_game_routes from './auto/v_player_year_league_summary_minute_game-routes';
-import v_player_year_league_summary_minute_quarter_routes from './auto/v_player_year_league_summary_minute_quarter-routes';
-import v_player_year_league_summary_seconds_play_routes from './auto/v_player_year_league_summary_seconds_play-routes';
-import v_player_year_league_summary_routes from './auto/v_player_year_league_summary-routes';
-import v_team_year_league_summary_minutes_game_routes from './auto/v_team_year_league_summary_minutes_game-routes';
-import v_team_year_league_summary_minutes_quarter_routes from './auto/v_team_year_league_summary_minutes_quarter-routes';
-import v_team_year_league_summary_seconds_play_routes from './auto/v_team_year_league_summary_seconds_play-routes';
-import v_team_year_league_summary_routes from './auto/v_team_year_league_summary-routes';
+import v_player_game_minute_boxscore_base from './auto/v_player_game_minute_boxscore_base-routes';
+import v_player_game_minute_boxscore from './auto/v_player_game_minute_boxscore-routes';
+import v_player_game_absolute_minute_boxscore from './auto/v_player_game_absolute_minute_boxscore-routes';
+import v_player_game_total_boxscore from './auto/v_player_game_total_boxscore-routes';
+import v_player_season_avg_boxscore from './auto/v_player_season_avg_boxscore-routes';
+import v_player_season_game_type_avg_boxscore from './auto/v_player_season_game_type_avg_boxscore-routes';
 
 // Custom
 import dashboardRoutes from './custom/dashboard-routes';
@@ -39,14 +37,12 @@ router.use('/referee', refereeRoutes);
 router.use('/team', teamRoutes);
 router.use('/player', playerRoutes);
 
-router.use('/v_player_year_league_summary_minute_game', v_player_year_league_summary_minute_game_routes);
-router.use('/v_player_year_league_summary_minute_quarter', v_player_year_league_summary_minute_quarter_routes);
-router.use('/v_player_year_league_summary_seconds_play', v_player_year_league_summary_seconds_play_routes);
-router.use('/v_player_year_league_summary', v_player_year_league_summary_routes);
-router.use('/v_team_year_league_summary_minutes_game', v_team_year_league_summary_minutes_game_routes);
-router.use('/v_team_year_league_summary_minutes_quarter', v_team_year_league_summary_minutes_quarter_routes);
-router.use('/v_team_year_league_summary_seconds_play', v_team_year_league_summary_seconds_play_routes);
-router.use('/v_team_year_league_summary', v_team_year_league_summary_routes);
+router.use('/v_player_game_minute_boxscore_base', v_player_game_minute_boxscore_base);
+router.use('/v_player_game_minute_boxscore', v_player_game_minute_boxscore);
+router.use('/v_player_game_absolute_minute_boxscore', v_player_game_absolute_minute_boxscore);
+router.use('/v_player_game_total_boxscore', v_player_game_total_boxscore);
+router.use('/v_player_season_avg_boxscore', v_player_season_avg_boxscore);
+router.use('/v_player_season_game_type_avg_boxscore', v_player_season_game_type_avg_boxscore);
 
 // Custom
 router.use('/dashboard', dashboardRoutes);

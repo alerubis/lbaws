@@ -1,8 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import axios from 'axios';
-import inquirer from 'inquirer';
+import inquirer, { DistinctQuestion } from 'inquirer';
 import _ from 'lodash';
-import { skip } from 'node:test';
+import fs from 'fs';
+import path from 'path';
+import readline from 'readline';
 
 export interface Team {
     id: number;
@@ -99,6 +101,82 @@ export interface Match {
 
 const prisma = new PrismaClient();
 
+async function importTeamsAndPlayersFromStats(token: string) {
+    for (let anno = new Date().getFullYear(); anno >= 2024; anno--) {
+        // 1. Recupero squadre della stagione
+        const teamResponse = await axios.get(`https://api-lba.procne.cloud/api/v1/teams?year=${anno}`, {
+            headers: { Authorization: `Bearer ${token}` },
+            responseType: "text",
+        });
+
+        const rawTeamData = JSON.parse(teamResponse.data);
+        const teams: Team[] = rawTeamData.teams;
+
+        console.log(`${anno} - ${teams.length} squadre trovate`);
+
+        await prisma.team.createMany({
+            data: teams.map(team => ({
+                id: team.id,
+                name: team.name,
+                logo_url: `https://lba-media.s3.eu-south-1.amazonaws.com/${team.logo_key}`,
+            })),
+            skipDuplicates: true,
+        });
+
+        // 2. Per ogni squadra, recupero player stats
+        for (const team of teams) {
+            try {
+                const statsResponse = await axios.get(`https://api-lba.procne.cloud/api/v1/teams/${team.id}/players_stats?s=${anno}&st=sum`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    responseType: "text",
+                });
+
+                const statsData = JSON.parse(statsResponse.data);
+                const playersStats: any[] = statsData.players;
+
+                console.log(`${anno} - ${team.name} - ${playersStats.length} giocatori trovati tramite stats`);
+
+                for (const stat of playersStats) {
+                    const playerId = stat.player_id;
+
+                    try {
+                        const playerResponse = await axios.get(`https://api-lba.procne.cloud/api/v1/players/${playerId}`, {
+                            headers: { Authorization: `Bearer ${token}` },
+                            responseType: "text",
+                        });
+
+                        const playerData = JSON.parse(playerResponse.data);
+                        const player: Player = playerData.player;
+
+                        await prisma.player.create({
+                            data: {
+                                id: player.id,
+                                name: player.name,
+                                surname: player.surname,
+                                logo_url: "https://www.legabasket.it/_next/static/media/AvatarPlaceholder.64b5f792.svg",
+                                height: player.height,
+                                year: player?.birth_date ? +player.birth_date.substring(0, 4) : null,
+                            },
+                        });
+
+                        console.log(`Inserito: ${player.name} ${player.surname}`);
+
+                    } catch (err: any) {
+                        if (err.code === 'P2002') {
+                            console.log(`Già presente: ${stat.player_name} ${stat.player_surname}`);
+                        } else {
+                            console.warn(`Errore per il giocatore ${stat.player_name} ${stat.player_surname}:`, err.message);
+                        }
+                    }
+                }
+
+            } catch (error: any) {
+                console.warn(`Errore stats squadra ${team.name} (${team.id}) - ${anno}:`, error.message);
+            }
+        }
+    }
+}
+
 async function importTeams(token: string) {
 
     // Ottengo le squadre da qui al 2000
@@ -127,6 +205,39 @@ async function importTeams(token: string) {
 
 }
 
+async function importAllPlayers(token: string) {
+    let page = 0;
+    let rawData: any = null;
+
+    do {
+        page++;
+
+        // Ottengo i giocatori
+        const response = await axios.get(`https://api-lba.procne.cloud/api/v1/players?full=1&ob=surname&sb=asc&page=${page}&items=25`, {
+            headers: { Authorization: `Bearer ${token}` },
+            responseType: "text",
+        });
+
+        rawData = JSON.parse(response.data);
+        const players: Player[] = rawData.players;
+
+        // Inserisco in db i giocatori
+        console.log(`Pagina ${page} - Inserisco in db ${players.length} giocatori...`);
+        await prisma.player.createMany({
+            data: players.map(player => ({
+                id: player.id,
+                name: player.name,
+                surname: player.surname,
+                logo_url: "https://www.legabasket.it/_next/static/media/AvatarPlaceholder.64b5f792.svg",
+                height: player.height,
+                year: player?.birth_date ? +player.birth_date.substring(0, 4) : null,
+            })),
+            skipDuplicates: true,
+        });
+
+    } while (rawData && rawData.pagination?.next != null);
+}
+
 async function importPlayers(token: string) {
 
     for (let anno = new Date().getFullYear(); anno >= 2000; anno--) {
@@ -152,8 +263,9 @@ async function importPlayers(token: string) {
                         id: player.id,
                         name: player.name,
                         surname: player.surname,
+                        logo_url: "https://www.legabasket.it/_next/static/media/AvatarPlaceholder.64b5f792.svg",
                         height: player.height,
-                        year: player.year,
+                        year: player?.birth_date ? +player.birth_date.substring(0, 4) : null,
                     };
                 }),
                 skipDuplicates: true,
@@ -202,6 +314,32 @@ async function importGames(token: string) {
 
                         if (matches && _.isArray(matches)) {
                             for (const match of matches) {
+                                const matchId = match.id;
+
+                                try {
+                                    const response = await axios.get(`https://api-lba.procne.cloud/api/v1/championships_matches/${matchId}/play_by_play?info=1&sort=desc`, {
+                                        headers: { Authorization: `Bearer ${token}` },
+                                        responseType: "json"
+                                    });
+
+                                    const playByPlayData = response.data;
+
+                                    const fs = require('fs');
+                                    const path = require('path');
+
+                                    const outputDir = './playbyplay_data';
+                                    if (!fs.existsSync(outputDir)) {
+                                        fs.mkdirSync(outputDir);
+                                    }
+
+                                    const filePath = path.join(outputDir, `playbyplay_${matchId}.json`);
+                                    fs.writeFileSync(filePath, JSON.stringify(playByPlayData, null, 2));
+
+                                    console.log(`✅ Salvato play-by-play per match ${matchId}`);
+                                } catch (err: any) {
+                                    console.error(`❌ Errore nel play-by-play per match ${matchId}:`, err.message);
+                                }
+
                                 console.log(`Anno ${anno} - Competizione ${competition.name} - Giornata ${calendarDay.name} - Partita ${match.h_team_name} vs ${match.v_team_name} - Finisce ${match.home_final_score} - ${match.visitor_final_score}`);
                             }
                         }
@@ -216,38 +354,214 @@ async function importGames(token: string) {
 
 }
 
-inquirer
-    .prompt([
-        { message: 'Che dati vuoi importare?', name: 'cosa', type: 'select', choices: ['Squadre', 'Giocatori', 'Partite'] },
-    ])
-    .then(async (answers) => {
+async function executeQueriesFromFile() {
+    // Chiedi all'utente il percorso del file
+    const answers = await inquirer.prompt([
+        {
+            type: 'input',
+            name: 'filePath',
+            message: 'Inserisci il percorso del file contenente le query:',
+            validate: (input: string) => {
+                if (!input.trim()) {
+                    return 'Il percorso del file è obbligatorio';
+                }
+                return true;
+            }
+        },
+        {
+            type: 'confirm',
+            name: 'confirm',
+            message: 'Sei sicuro di voler eseguire tutte le query nel file? (Potrebbero essercene migliaia)',
+            default: false
+        }
+    ]);
 
-        // Ottengo il token;
-        console.log('Ottengo il token...');
-        const authResponse = await axios.get('https://www.legabasket.it/api/oauth', {
-            headers: {},
-            responseType: "text"
-        });
-        const token: string = JSON.parse(authResponse.data).data.token;
-        console.log('Token ottenuto: ' + token);
+    if (!answers.confirm) {
+        console.log('Operazione annullata');
+        return;
+    }
 
-        const cosa = answers.cosa;
-        switch (cosa) {
-            case 'Squadre':
-                importTeams(token);
-                break;
-            case 'Giocatori':
-                importPlayers(token);
-                break;
-            case 'Partite':
-                importGames(token);
-                break;
-            default:
-                console.log('Nessuna selezione effettuata');
-                break;
+    const filePath = path.resolve(answers.filePath);
+    
+    if (!fs.existsSync(filePath)) {
+        console.error(`Il file ${filePath} non esiste`);
+        return;
+    }
+
+    console.log(`Inizio esecuzione delle query da ${filePath}...`);
+
+    let queryCount = 0;
+    let successCount = 0;
+    let errorCount = 0;
+    let batchCount = 0;
+    const batchSize = 100;
+
+    // Mappa per memorizzare le variabili
+    const variables: Record<string, any> = {};
+
+    const fileStream = fs.createReadStream(filePath);
+    const rl = readline.createInterface({
+        input: fileStream,
+        crlfDelay: Infinity
+    });
+
+    let currentBatch: {query: string, params: any[]}[] = [];
+
+    for await (const line of rl) {
+        const rawLine = line.trim();
+        if (!rawLine) continue;
+
+        // Gestione delle variabili (es: SET @game_id = 12345;)
+        if (rawLine.startsWith('SET @')) {
+            const varMatch = rawLine.match(/SET @(\w+)\s*=\s*([^;]+);/);
+            if (varMatch) {
+                variables[varMatch[1]] = varMatch[2].trim();
+                continue;
+            }
         }
 
+        queryCount++;
+        
+        // Sostituisci le variabili nella query
+        let finalQuery = rawLine;
+        const params: any[] = [];
+        
+        // Trova tutte le variabili nella query
+        const varMatches = rawLine.match(/@(\w+)/g) || [];
+        for (const varName of varMatches) {
+            const cleanVarName = varName.substring(1); // Rimuovi @
+            if (variables[cleanVarName] !== undefined) {
+                // Sostituisci la variabile con un parametro posizionale
+                finalQuery = finalQuery.replace(new RegExp(varName, 'g'), '?');
+                params.push(variables[cleanVarName]);
+            }
+        }
+
+        currentBatch.push({query: finalQuery, params});
+
+        if (currentBatch.length >= batchSize) {
+            batchCount++;
+            try {
+                await prisma.$transaction(
+                    currentBatch.map(({query, params}) => 
+                        params.length > 0 
+                            ? prisma.$executeRawUnsafe(query, ...params)
+                            : prisma.$executeRawUnsafe(query)
+                    )
+                );
+                successCount += currentBatch.length;
+                console.log(`Batch ${batchCount} eseguito con successo (${successCount} query totali)`);
+            } catch (error) {
+                errorCount += currentBatch.length;
+                console.error(`Errore nel batch ${batchCount}:`, error);
+                
+                // Esegui le query una per una per debug
+                for (const {query, params} of currentBatch) {
+                    try {
+                        if (params.length > 0) {
+                            await prisma.$executeRawUnsafe(query, ...params);
+                        } else {
+                            await prisma.$executeRawUnsafe(query);
+                        }
+                        successCount++;
+                    } catch (err) {
+                        errorCount++;
+                        console.error('Query fallita:', query);
+                        console.error('Parametri:', params);
+                        console.error('Errore:', err);
+                    }
+                }
+            }
+            currentBatch = [];
+        }
+    }
+
+    // Esegui le query rimanenti
+    if (currentBatch.length > 0) {
+        batchCount++;
+        try {
+            await prisma.$transaction(
+                currentBatch.map(({query, params}) => 
+                    params.length > 0 
+                        ? prisma.$executeRawUnsafe(query, ...params)
+                        : prisma.$executeRawUnsafe(query)
+                )
+            );
+            successCount += currentBatch.length;
+            console.log(`Ultimo batch eseguito con successo (${successCount} query totali)`);
+        } catch (error) {
+            errorCount += currentBatch.length;
+            console.error(`Errore nell'ultimo batch:`, error);
+            for (const {query, params} of currentBatch) {
+                try {
+                    if (params.length > 0) {
+                        await prisma.$executeRawUnsafe(query, ...params);
+                    } else {
+                        await prisma.$executeRawUnsafe(query);
+                    }
+                    successCount++;
+                } catch (err) {
+                    errorCount++;
+                    console.error('Query fallita:', query);
+                    console.error('Parametri:', params);
+                    console.error('Errore:', err);
+                }
+            }
+        }
+    }
+
+    console.log(`Esecuzione completata.`);
+    console.log(`Query totali: ${queryCount}`);
+    console.log(`Query eseguite con successo: ${successCount}`);
+    console.log(`Query fallite: ${errorCount}`);
+}
+
+inquirer
+    .prompt([
+        {
+            message: 'Che dati vuoi importare?',
+            name: 'cosa',
+            type: 'list',
+            choices: [
+                'Squadre',
+                'Giocatori',
+                'Partite',
+                'Esegui query da file'
+            ]
+        },
+    ])
+    .then(async (answers) => {
+        const cosa = answers.cosa;
+
+        // Le prime tre opzioni richiedono il token
+        if (['Squadre', 'Giocatori', 'Partite'].includes(cosa)) {
+            console.log('Ottengo il token...');
+            const authResponse = await axios.get('https://www.legabasket.it/api/oauth', {
+                headers: {},
+                responseType: "text"
+            });
+            const token: string = JSON.parse(authResponse.data).data.token;
+            console.log('Token ottenuto: ' + token);
+
+            switch (cosa) {
+                case 'Squadre':
+                    await importTeams(token);
+                    break;
+                case 'Giocatori':
+                    await importTeamsAndPlayersFromStats(token);
+                    break;
+                case 'Partite':
+                    await importGames(token);
+                    break;
+            }
+        } else {
+            // L'esecuzione delle query non richiede il token
+            await executeQueriesFromFile();
+        }
     })
     .catch((error) => {
         console.error("ERRORE", error);
+    })
+    .finally(async () => {
+        await prisma.$disconnect();
     });
