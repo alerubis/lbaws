@@ -123,7 +123,11 @@ function mapFieldTypeToTypeScript(column: any): string {
             return 'number';
 
         case 'bigint':
-            return 'Date';
+            if (column.COLUMN_NAME.endsWith('_utc')) {
+                return 'Date';
+            } else {
+                return 'number';
+            }
 
         case 'varchar':
         case 'text':
