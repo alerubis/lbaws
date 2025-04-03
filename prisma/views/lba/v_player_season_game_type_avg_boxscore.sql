@@ -1,8 +1,6 @@
 SELECT
   `lba`.`v_player_game_total_boxscore`.`player_id` AS `player_id`,
-  `lba`.`v_player_game_total_boxscore`.`player_name` AS `player_name`,
-  `lba`.`v_player_game_total_boxscore`.`player_surname` AS `player_surname`,
-  `lba`.`v_player_game_total_boxscore`.`team_name` AS `team_name`,
+  `lba`.`v_player_game_total_boxscore`.`team_id` AS `team_id`,
   `lba`.`v_player_game_total_boxscore`.`league_year_id` AS `league_year_id`,
   `lba`.`v_player_game_total_boxscore`.`league_id` AS `league_id`,
   `lba`.`v_player_game_total_boxscore`.`type_game_id` AS `type_game_id`,
@@ -198,9 +196,7 @@ FROM
   `lba`.`v_player_game_total_boxscore`
 GROUP BY
   `lba`.`v_player_game_total_boxscore`.`player_id`,
-  `lba`.`v_player_game_total_boxscore`.`player_name`,
-  `lba`.`v_player_game_total_boxscore`.`player_surname`,
-  `lba`.`v_player_game_total_boxscore`.`team_name`,
+  `lba`.`v_player_game_total_boxscore`.`team_id`,
   `lba`.`v_player_game_total_boxscore`.`league_year_id`,
   `lba`.`v_player_game_total_boxscore`.`league_id`,
   `lba`.`v_player_game_total_boxscore`.`type_game_id`

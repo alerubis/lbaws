@@ -21,9 +21,7 @@ SELECT
   `lba`.`base`.`turnovers` AS `turnovers`,
   `lba`.`base`.`steals` AS `steals`,
   `lba`.`base`.`assists` AS `assists`,
-  `pl`.`name` AS `player_name`,
-  `pl`.`surname` AS `player_surname`,
-  `t`.`name` AS `team_name`,
+  `t`.`id` AS `team_id`,
   `g`.`type_game_id` AS `type_game_id`,
   `g`.`league_year_id` AS `league_year_id`,
   `ly`.`league_id` AS `league_id`
