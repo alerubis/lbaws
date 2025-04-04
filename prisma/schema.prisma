@@ -511,39 +511,8 @@ view v_player_season_game_type_avg_boxscore {
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view v_team_game_absolute_minute_boxscore {
-  team_id         Int      @id
-  game_id         Int
-  type_game_id    Int
-  league_year_id  Int
-  league_id       Int
-  absolute_minute BigInt?
-  fouls_committed Decimal? @db.Decimal(64, 0)
-  fouls_received  Decimal? @db.Decimal(64, 0)
-  points          Decimal? @db.Decimal(64, 0)
-  made_2pt        Decimal? @db.Decimal(64, 0)
-  missed_2pt      Decimal? @db.Decimal(64, 0)
-  pct_2pt         Decimal? @db.Decimal(64, 1)
-  made_3pt        Decimal? @db.Decimal(64, 0)
-  missed_3pt      Decimal? @db.Decimal(64, 0)
-  pct_3pt         Decimal? @db.Decimal(64, 1)
-  made_ft         Decimal? @db.Decimal(64, 0)
-  missed_ft       Decimal? @db.Decimal(64, 0)
-  pct_ft          Decimal? @db.Decimal(64, 1)
-  off_reb         Decimal? @db.Decimal(64, 0)
-  def_reb         Decimal? @db.Decimal(64, 0)
-  blocks_made     Decimal? @db.Decimal(64, 0)
-  blocks_suffered Decimal? @db.Decimal(64, 0)
-  turnovers       Decimal? @db.Decimal(64, 0)
-  steals          Decimal? @db.Decimal(64, 0)
-  assists         Decimal? @db.Decimal(64, 0)
-
-
-}
-
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view v_team_game_minute_boxscore {
-  team_id         Int      @id
+  team_id         Int      @id @default(0)
   game_id         Int
   minute          BigInt?
   type_game_id    Int
@@ -568,95 +537,116 @@ view v_team_game_minute_boxscore {
   turnovers       Decimal? @db.Decimal(42, 0)
   steals          Decimal? @db.Decimal(42, 0)
   assists         Decimal? @db.Decimal(42, 0)
-
-
-}
-
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view v_team_game_total_boxscore {
-  team_id         Int      @id
-  game_id         Int
-  type_game_id    Int
-  league_year_id  Int
-  league_id       Int
-  fouls_committed Decimal? @db.Decimal(64, 0)
-  fouls_received  Decimal? @db.Decimal(64, 0)
-  points          Decimal? @db.Decimal(76, 0)
-  made_2pt        Decimal? @db.Decimal(67, 0)
-  missed_2pt      Decimal? @db.Decimal(67, 0)
-  pct_2pt         Decimal? @db.Decimal(62, 1)
-  made_3pt        Decimal? @db.Decimal(67, 0)
-  missed_3pt      Decimal? @db.Decimal(67, 0)
-  pct_3pt         Decimal? @db.Decimal(62, 1)
-  made_ft         Decimal? @db.Decimal(67, 0)
-  missed_ft       Decimal? @db.Decimal(67, 0)
-  pct_ft          Decimal? @db.Decimal(62, 1)
-  off_reb         Decimal? @db.Decimal(64, 0)
-  def_reb         Decimal? @db.Decimal(64, 0)
-  blocks_made     Decimal? @db.Decimal(64, 0)
-  blocks_suffered Decimal? @db.Decimal(64, 0)
-  turnovers       Decimal? @db.Decimal(64, 0)
-  steals          Decimal? @db.Decimal(64, 0)
-  assists         Decimal? @db.Decimal(64, 0)
-
-
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view v_team_season_avg_boxscore {
-  team_id         Int      @id
+  team_id         Int      @id @default(0)
   league_year_id  Int
   league_id       Int
   games           BigInt   @default(0)
-  fouls_committed Decimal? @db.Decimal(64, 2)
-  fouls_received  Decimal? @db.Decimal(64, 2)
-  points          Decimal? @db.Decimal(64, 2)
-  made_2pt        Decimal? @db.Decimal(64, 2)
-  missed_2pt      Decimal? @db.Decimal(64, 2)
-  pct_2pt         Decimal? @db.Decimal(62, 1)
-  made_3pt        Decimal? @db.Decimal(64, 2)
-  missed_3pt      Decimal? @db.Decimal(64, 2)
-  pct_3pt         Decimal? @db.Decimal(62, 1)
-  made_ft         Decimal? @db.Decimal(64, 2)
-  missed_ft       Decimal? @db.Decimal(64, 2)
-  pct_ft          Decimal? @db.Decimal(62, 1)
-  off_reb         Decimal? @db.Decimal(64, 2)
-  def_reb         Decimal? @db.Decimal(64, 2)
-  blocks_made     Decimal? @db.Decimal(64, 2)
-  blocks_suffered Decimal? @db.Decimal(64, 2)
-  turnovers       Decimal? @db.Decimal(64, 2)
-  steals          Decimal? @db.Decimal(64, 2)
-  assists         Decimal? @db.Decimal(64, 2)
-
-
+  fouls_committed Decimal? @db.Decimal(35, 2)
+  fouls_received  Decimal? @db.Decimal(35, 2)
+  points          Decimal? @db.Decimal(35, 2)
+  made_2pt        Decimal? @db.Decimal(35, 2)
+  missed_2pt      Decimal? @db.Decimal(35, 2)
+  pct_2pt         Decimal? @db.Decimal(37, 1)
+  made_3pt        Decimal? @db.Decimal(35, 2)
+  missed_3pt      Decimal? @db.Decimal(35, 2)
+  pct_3pt         Decimal? @db.Decimal(37, 1)
+  made_ft         Decimal? @db.Decimal(35, 2)
+  missed_ft       Decimal? @db.Decimal(35, 2)
+  pct_ft          Decimal? @db.Decimal(37, 1)
+  off_reb         Decimal? @db.Decimal(35, 2)
+  def_reb         Decimal? @db.Decimal(35, 2)
+  blocks_made     Decimal? @db.Decimal(35, 2)
+  blocks_suffered Decimal? @db.Decimal(35, 2)
+  turnovers       Decimal? @db.Decimal(35, 2)
+  steals          Decimal? @db.Decimal(35, 2)
+  assists         Decimal? @db.Decimal(35, 2)
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view v_team_season_game_type_avg_boxscore {
-  team_id         Int      @id
+  team_id         Int      @id @default(0)
   league_year_id  Int
   league_id       Int
   type_game_id    Int
   games           BigInt   @default(0)
-  fouls_committed Decimal? @db.Decimal(64, 2)
-  fouls_received  Decimal? @db.Decimal(64, 2)
-  points          Decimal? @db.Decimal(64, 2)
-  made_2pt        Decimal? @db.Decimal(64, 2)
-  missed_2pt      Decimal? @db.Decimal(64, 2)
-  pct_2pt         Decimal? @db.Decimal(62, 1)
-  made_3pt        Decimal? @db.Decimal(64, 2)
-  missed_3pt      Decimal? @db.Decimal(64, 2)
-  pct_3pt         Decimal? @db.Decimal(62, 1)
-  made_ft         Decimal? @db.Decimal(64, 2)
-  missed_ft       Decimal? @db.Decimal(64, 2)
-  pct_ft          Decimal? @db.Decimal(62, 1)
-  off_reb         Decimal? @db.Decimal(64, 2)
-  def_reb         Decimal? @db.Decimal(64, 2)
-  blocks_made     Decimal? @db.Decimal(64, 2)
-  blocks_suffered Decimal? @db.Decimal(64, 2)
-  turnovers       Decimal? @db.Decimal(64, 2)
-  steals          Decimal? @db.Decimal(64, 2)
-  assists         Decimal? @db.Decimal(64, 2)
+  fouls_committed Decimal? @db.Decimal(35, 2)
+  fouls_received  Decimal? @db.Decimal(35, 2)
+  points          Decimal? @db.Decimal(35, 2)
+  made_2pt        Decimal? @db.Decimal(35, 2)
+  missed_2pt      Decimal? @db.Decimal(35, 2)
+  pct_2pt         Decimal? @db.Decimal(37, 1)
+  made_3pt        Decimal? @db.Decimal(35, 2)
+  missed_3pt      Decimal? @db.Decimal(35, 2)
+  pct_3pt         Decimal? @db.Decimal(37, 1)
+  made_ft         Decimal? @db.Decimal(35, 2)
+  missed_ft       Decimal? @db.Decimal(35, 2)
+  pct_ft          Decimal? @db.Decimal(37, 1)
+  off_reb         Decimal? @db.Decimal(35, 2)
+  def_reb         Decimal? @db.Decimal(35, 2)
+  blocks_made     Decimal? @db.Decimal(35, 2)
+  blocks_suffered Decimal? @db.Decimal(35, 2)
+  turnovers       Decimal? @db.Decimal(35, 2)
+  steals          Decimal? @db.Decimal(35, 2)
+  assists         Decimal? @db.Decimal(35, 2)
+}
 
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_team_game_absolute_minute_boxscore {
+  team_id         Int      @id @default(0)
+  game_id         Int
+  type_game_id    Int
+  league_year_id  Int
+  league_id       Int
+  absolute_minute BigInt?
+  fouls_committed Decimal? @db.Decimal(10, 0)
+  fouls_received  Decimal? @db.Decimal(10, 0)
+  points          Decimal? @db.Decimal(10, 0)
+  made_2pt        Decimal? @db.Decimal(10, 0)
+  missed_2pt      Decimal? @db.Decimal(10, 0)
+  pct_2pt         Decimal? @db.Decimal(10, 0)
+  made_3pt        Decimal? @db.Decimal(10, 0)
+  missed_3pt      Decimal? @db.Decimal(10, 0)
+  pct_3pt         Decimal? @db.Decimal(10, 0)
+  made_ft         Decimal? @db.Decimal(10, 0)
+  missed_ft       Decimal? @db.Decimal(10, 0)
+  pct_ft          Decimal? @db.Decimal(10, 0)
+  off_reb         Decimal? @db.Decimal(10, 0)
+  def_reb         Decimal? @db.Decimal(10, 0)
+  blocks_made     Decimal? @db.Decimal(10, 0)
+  blocks_suffered Decimal? @db.Decimal(10, 0)
+  turnovers       Decimal? @db.Decimal(10, 0)
+  steals          Decimal? @db.Decimal(10, 0)
+  assists         Decimal? @db.Decimal(10, 0)
+}
 
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_team_game_total_boxscore {
+  team_id         Int      @id @default(0)
+  game_id         Int
+  type_game_id    Int
+  league_year_id  Int
+  league_id       Int
+  fouls_committed Decimal? @db.Decimal(10, 0)
+  fouls_received  Decimal? @db.Decimal(10, 0)
+  points          Decimal? @db.Decimal(10, 0)
+  made_2pt        Decimal? @db.Decimal(10, 0)
+  missed_2pt      Decimal? @db.Decimal(10, 0)
+  pct_2pt         Decimal? @db.Decimal(10, 0)
+  made_3pt        Decimal? @db.Decimal(10, 0)
+  missed_3pt      Decimal? @db.Decimal(10, 0)
+  pct_3pt         Decimal? @db.Decimal(10, 0)
+  made_ft         Decimal? @db.Decimal(10, 0)
+  missed_ft       Decimal? @db.Decimal(10, 0)
+  pct_ft          Decimal? @db.Decimal(10, 0)
+  off_reb         Decimal? @db.Decimal(10, 0)
+  def_reb         Decimal? @db.Decimal(10, 0)
+  blocks_made     Decimal? @db.Decimal(10, 0)
+  blocks_suffered Decimal? @db.Decimal(10, 0)
+  turnovers       Decimal? @db.Decimal(10, 0)
+  steals          Decimal? @db.Decimal(10, 0)
+  assists         Decimal? @db.Decimal(10, 0)
 }
