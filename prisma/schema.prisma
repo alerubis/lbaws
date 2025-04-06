@@ -208,6 +208,8 @@ model player_team_game_play {
   play_id                                                                                               Int
   seconds_start                                                                                         Int?
   seconds_end                                                                                           Int?
+  total_seconds_played_before                                                                           Int?             @default(0)
+  consecutive_seconds_playing                                                                           Int?             @default(0)
   play                                                                                                  play             @relation(fields: [play_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_game_play_id")
   player_team_game                                                                                      player_team_game @relation(fields: [player_id, team_id, game_id], references: [player_id, team_id, game_id], onDelete: NoAction, onUpdate: NoAction, map: "player_team_game_player_id_team_id_game_id")
   sub_play_sub_play_player_made_id_team_made_id_game_made_id_play_idToplayer_team_game_play             sub_play[]       @relation("sub_play_player_made_id_team_made_id_game_made_id_play_idToplayer_team_game_play")
@@ -451,6 +453,7 @@ view v_player_game_total_boxscore {
   turnovers       Decimal? @db.Decimal(42, 0)
   steals          Decimal? @db.Decimal(42, 0)
   assists         Decimal? @db.Decimal(42, 0)
+  minute          BigInt?
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -649,4 +652,73 @@ view v_team_game_total_boxscore {
   turnovers       Decimal? @db.Decimal(10, 0)
   steals          Decimal? @db.Decimal(10, 0)
   assists         Decimal? @db.Decimal(10, 0)
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_game {
+  id                Int     @id @default(0)
+  league_year_id    Int
+  type_game_id      Int
+  team_home_id      Int
+  team_guest_id     Int
+  team_home_points  Int?
+  team_guest_points Int?
+  date_hours_utc    BigInt?
+  referee_1_id      Int
+  referee_2_id      Int
+  referee_3_id      Int
+  team_home_name    String  @db.VarChar(64)
+  team_guest_name   String  @db.VarChar(64)
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_player_game_minute_played_before_boxscore {
+  player_id       Int      @id
+  game_id         Int
+  minute          BigInt?
+  fouls_committed BigInt   @default(0)
+  fouls_received  BigInt   @default(0)
+  points          Decimal? @db.Decimal(32, 0)
+  made_2pt        Decimal? @db.Decimal(23, 0)
+  missed_2pt      Decimal? @db.Decimal(23, 0)
+  pct_2pt         Decimal? @db.Decimal(28, 1)
+  made_3pt        Decimal? @db.Decimal(23, 0)
+  missed_3pt      Decimal? @db.Decimal(23, 0)
+  pct_3pt         Decimal? @db.Decimal(28, 1)
+  made_ft         Decimal? @db.Decimal(23, 0)
+  missed_ft       Decimal? @db.Decimal(23, 0)
+  pct_ft          Decimal? @db.Decimal(28, 1)
+  off_reb         BigInt   @default(0)
+  def_reb         BigInt   @default(0)
+  blocks_made     BigInt   @default(0)
+  blocks_suffered BigInt   @default(0)
+  turnovers       BigInt   @default(0)
+  steals          BigInt   @default(0)
+  assists         BigInt   @default(0)
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_player_game_minute_playing_boxscore {
+  player_id       Int      @id
+  game_id         Int
+  minute          BigInt?
+  fouls_committed BigInt   @default(0)
+  fouls_received  BigInt   @default(0)
+  points          Decimal? @db.Decimal(32, 0)
+  made_2pt        Decimal? @db.Decimal(23, 0)
+  missed_2pt      Decimal? @db.Decimal(23, 0)
+  pct_2pt         Decimal? @db.Decimal(28, 1)
+  made_3pt        Decimal? @db.Decimal(23, 0)
+  missed_3pt      Decimal? @db.Decimal(23, 0)
+  pct_3pt         Decimal? @db.Decimal(28, 1)
+  made_ft         Decimal? @db.Decimal(23, 0)
+  missed_ft       Decimal? @db.Decimal(23, 0)
+  pct_ft          Decimal? @db.Decimal(28, 1)
+  off_reb         BigInt   @default(0)
+  def_reb         BigInt   @default(0)
+  blocks_made     BigInt   @default(0)
+  blocks_suffered BigInt   @default(0)
+  turnovers       BigInt   @default(0)
+  steals          BigInt   @default(0)
+  assists         BigInt   @default(0)
 }

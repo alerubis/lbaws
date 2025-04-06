@@ -148,40 +148,52 @@ GROUP BY
 -- Vista aggregata per partita intera
 CREATE VIEW v_player_game_total_boxscore AS
 SELECT
-  player_id,
-  game_id,
-  team_id,
-  type_game_id,
-  league_year_id,
-  league_id,
+  v.player_id,
+  v.game_id,
+  v.team_id,
+  v.type_game_id,
+  v.league_year_id,
+  v.league_id,
 
-  SUM(fouls_committed) AS fouls_committed,
-  SUM(fouls_received) AS fouls_received,
-  SUM(points) AS points,
-  SUM(made_2pt) AS made_2pt,
-  SUM(missed_2pt) AS missed_2pt,
-  ROUND(SUM(made_2pt) * 100.0 / NULLIF(SUM(made_2pt + missed_2pt), 0), 1) AS pct_2pt,
-  SUM(made_3pt) AS made_3pt,
-  SUM(missed_3pt) AS missed_3pt,
-  ROUND(SUM(made_3pt) * 100.0 / NULLIF(SUM(made_3pt + missed_3pt), 0), 1) AS pct_3pt,
-  SUM(made_ft) AS made_ft,
-  SUM(missed_ft) AS missed_ft,
-  ROUND(SUM(made_ft) * 100.0 / NULLIF(SUM(made_ft + missed_ft), 0), 1) AS pct_ft,
-  SUM(off_reb) AS off_reb,
-  SUM(def_reb) AS def_reb,
-  SUM(blocks_made) AS blocks_made,
-  SUM(blocks_suffered) AS blocks_suffered,
-  SUM(turnovers) AS turnovers,
-  SUM(steals) AS steals,
-  SUM(assists) AS assists
-FROM v_player_game_minute_boxscore
+  SUM(v.fouls_committed) AS fouls_committed,
+  SUM(v.fouls_received) AS fouls_received,
+  SUM(v.points) AS points,
+
+  SUM(v.made_2pt) AS made_2pt,
+  SUM(v.missed_2pt) AS missed_2pt,
+  ROUND(SUM(v.made_2pt) * 100.0 / NULLIF(SUM(v.made_2pt + v.missed_2pt), 0), 1) AS pct_2pt,
+
+  SUM(v.made_3pt) AS made_3pt,
+  SUM(v.missed_3pt) AS missed_3pt,
+  ROUND(SUM(v.made_3pt) * 100.0 / NULLIF(SUM(v.made_3pt + v.missed_3pt), 0), 1) AS pct_3pt,
+
+  SUM(v.made_ft) AS made_ft,
+  SUM(v.missed_ft) AS missed_ft,
+  ROUND(SUM(v.made_ft) * 100.0 / NULLIF(SUM(v.made_ft + v.missed_ft), 0), 1) AS pct_ft,
+
+  SUM(v.off_reb) AS off_reb,
+  SUM(v.def_reb) AS def_reb,
+  SUM(v.blocks_made) AS blocks_made,
+  SUM(v.blocks_suffered) AS blocks_suffered,
+  SUM(v.turnovers) AS turnovers,
+  SUM(v.steals) AS steals,
+  SUM(v.assists) AS assists,
+
+  FLOOR((
+    SELECT MAX(ptgp.total_seconds_played_before)
+    FROM player_team_game_play ptgp
+    WHERE ptgp.player_id = v.player_id AND ptgp.game_id = v.game_id
+  ) / 60) AS minute
+
+FROM v_player_game_minute_boxscore v
+
 GROUP BY
-  player_id,
-  game_id,
-  team_id,
-  type_game_id,
-  league_year_id,
-  league_id;
+  v.player_id,
+  v.game_id,
+  v.team_id,
+  v.type_game_id,
+  v.league_year_id,
+  v.league_id;
 
 
 -- Vista aggregata per media per stagione
@@ -439,6 +451,118 @@ GROUP BY
   league_year_id,
   league_id,
   type_game_id;
+
+CREATE VIEW VGame AS
+SELECT
+  g.*,
+  th.name AS team_home_name,
+  tg.name AS team_guest_name
+FROM
+  game g
+JOIN team th ON g.team_home_id = th.id
+JOIN team tg ON g.team_guest_id = tg.id;
+
+CREATE VIEW v_player_game_minute_boxscore_consecutive AS
+SELECT
+  ptgp.player_id,
+  ptgp.game_id,
+  FLOOR(ptgp.consecutive_seconds_playing / 60) + 1 AS minute,
+
+  COUNT(DISTINCT CASE WHEN sp.player_made_id = ptgp.player_id AND sp.foul_id IS NOT NULL THEN sp.id END) AS fouls_committed,
+  COUNT(DISTINCT CASE WHEN sp.player_suffered_id = ptgp.player_id AND sp.foul_id IS NOT NULL THEN sp.id END) AS fouls_received,
+
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point > 0 AND ds.made_01 = '1' THEN ds.point ELSE 0 END) AS points,
+
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 2 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS made_2pt,
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 2 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS missed_2pt,
+  ROUND(
+    SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 2 AND ds.made_01 = '1' THEN 1 ELSE 0 END) * 100.0 /
+    NULLIF(SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 2 THEN 1 ELSE 0 END), 0), 1
+  ) AS pct_2pt,
+
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS made_3pt,
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 3 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS missed_3pt,
+  ROUND(
+    SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) * 100.0 /
+    NULLIF(SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 3 THEN 1 ELSE 0 END), 0), 1
+  ) AS pct_3pt,
+
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS made_ft,
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 1 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS missed_ft,
+  ROUND(
+    SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) * 100.0 /
+    NULLIF(SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 1 THEN 1 ELSE 0 END), 0), 1
+  ) AS pct_ft,
+
+  COUNT(DISTINCT CASE WHEN sp.player_made_id = ptgp.player_id AND sp.rebound_offensive_01 = '1' THEN sp.id END) AS off_reb,
+  COUNT(DISTINCT CASE WHEN sp.player_made_id = ptgp.player_id AND sp.rebound_defensive_01 = '1' THEN sp.id END) AS def_reb,
+
+  COUNT(DISTINCT CASE WHEN sp.player_made_id = ptgp.player_id AND sp.blocks_01 = '1' THEN sp.id END) AS blocks_made,
+  COUNT(DISTINCT CASE WHEN sp.player_suffered_id = ptgp.player_id AND sp.blocks_01 = '1' THEN sp.id END) AS blocks_suffered,
+
+  COUNT(DISTINCT CASE WHEN sp.player_made_id = ptgp.player_id AND sp.turnover_id IS NOT NULL THEN sp.id END) AS turnovers,
+  COUNT(DISTINCT CASE WHEN sp.player_suffered_id = ptgp.player_id AND sp.turnover_id IS NOT NULL THEN sp.id END) AS steals,
+
+  COUNT(DISTINCT CASE WHEN sp.player_made_id = ptgp.player_id AND sp.assist_01 = '1' THEN sp.id END) AS assists
+
+FROM
+  player_team_game_play ptgp
+JOIN play p ON p.id = ptgp.play_id
+JOIN sub_play sp ON sp.play_id = p.id
+LEFT JOIN dz_shot ds ON ds.id = sp.shot_id
+
+GROUP BY ptgp.player_id, ptgp.game_id, minute;
+
+CREATE VIEW v_player_game_minute_boxscore_total AS
+SELECT
+  ptgp.player_id,
+  ptgp.game_id,
+  FLOOR(ptgp.total_seconds_played_before / 60) + 1 AS minute,
+
+  COUNT(DISTINCT CASE WHEN sp.player_made_id = ptgp.player_id AND sp.foul_id IS NOT NULL THEN sp.id END) AS fouls_committed,
+  COUNT(DISTINCT CASE WHEN sp.player_suffered_id = ptgp.player_id AND sp.foul_id IS NOT NULL THEN sp.id END) AS fouls_received,
+
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point > 0 AND ds.made_01 = '1' THEN ds.point ELSE 0 END) AS points,
+
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 2 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS made_2pt,
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 2 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS missed_2pt,
+  ROUND(
+    SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 2 AND ds.made_01 = '1' THEN 1 ELSE 0 END) * 100.0 /
+    NULLIF(SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 2 THEN 1 ELSE 0 END), 0), 1
+  ) AS pct_2pt,
+
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS made_3pt,
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 3 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS missed_3pt,
+  ROUND(
+    SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 3 AND ds.made_01 = '1' THEN 1 ELSE 0 END) * 100.0 /
+    NULLIF(SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 3 THEN 1 ELSE 0 END), 0), 1
+  ) AS pct_3pt,
+
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) AS made_ft,
+  SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 1 AND ds.made_01 = '0' THEN 1 ELSE 0 END) AS missed_ft,
+  ROUND(
+    SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 1 AND ds.made_01 = '1' THEN 1 ELSE 0 END) * 100.0 /
+    NULLIF(SUM(CASE WHEN sp.player_made_id = ptgp.player_id AND ds.point = 1 THEN 1 ELSE 0 END), 0), 1
+  ) AS pct_ft,
+
+  COUNT(DISTINCT CASE WHEN sp.player_made_id = ptgp.player_id AND sp.rebound_offensive_01 = '1' THEN sp.id END) AS off_reb,
+  COUNT(DISTINCT CASE WHEN sp.player_made_id = ptgp.player_id AND sp.rebound_defensive_01 = '1' THEN sp.id END) AS def_reb,
+
+  COUNT(DISTINCT CASE WHEN sp.player_made_id = ptgp.player_id AND sp.blocks_01 = '1' THEN sp.id END) AS blocks_made,
+  COUNT(DISTINCT CASE WHEN sp.player_suffered_id = ptgp.player_id AND sp.blocks_01 = '1' THEN sp.id END) AS blocks_suffered,
+
+  COUNT(DISTINCT CASE WHEN sp.player_made_id = ptgp.player_id AND sp.turnover_id IS NOT NULL THEN sp.id END) AS turnovers,
+  COUNT(DISTINCT CASE WHEN sp.player_suffered_id = ptgp.player_id AND sp.turnover_id IS NOT NULL THEN sp.id END) AS steals,
+
+  COUNT(DISTINCT CASE WHEN sp.player_made_id = ptgp.player_id AND sp.assist_01 = '1' THEN sp.id END) AS assists
+
+FROM
+  player_team_game_play ptgp
+JOIN play p ON p.id = ptgp.play_id
+JOIN sub_play sp ON sp.play_id = p.id
+LEFT JOIN dz_shot ds ON ds.id = sp.shot_id
+
+GROUP BY ptgp.player_id, ptgp.game_id, minute;
 
 
 INSERT INTO player_team_game_play(player_id, team_id, game_id, play_id, seconds_start, seconds_end) VALUES(1592, 1658, 24666, 1681, 744, 752);

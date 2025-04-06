@@ -206,6 +206,8 @@ CREATE TABLE `player_team_game_play` (
   `play_id` int NOT NULL,
   `seconds_start` int default NULL,
   `seconds_end` int default NULL,
+  `total_seconds_played_before` INT DEFAULT 0,
+  `consecutive_seconds_playing` INT DEFAULT 0,
   PRIMARY KEY (`player_id`, `team_id`, `game_id`, `play_id`),
   CONSTRAINT `player_team_game_player_id_team_id_game_id` FOREIGN KEY (`player_id`, `team_id`, `game_id`) REFERENCES `player_team_game` (`player_id`, `team_id`, `game_id`),
   CONSTRAINT `player_team_game_play_id` FOREIGN KEY (`play_id`) REFERENCES `play` (`id`)
@@ -497,3 +499,9 @@ INSERT INTO `referee` (`name`, `surname`) VALUES
 ('Luca', 'Pancotto'),
 ('Alessandro', 'Cremonini'),
 ('Davide', 'Santi');
+
+
+-- 1. Aggiunta colonne alla tabella principale
+ALTER TABLE player_team_game_play
+ADD COLUMN 
+ADD COLUMN 
