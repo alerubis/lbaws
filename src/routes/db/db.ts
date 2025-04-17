@@ -28,6 +28,7 @@ import v_game from './auto/v_game-routes';
 
 // Custom
 import dashboardRoutes from './custom/dashboard-routes';
+import lineupBoxscoreRoutes from './custom/lineup-boxscore-routes';
 import dashboardCardRoutes from './custom/dashboard_card-routes';
 import playerRoutes from './auto/player-routes';
 
@@ -65,5 +66,6 @@ router.use('/v_team_game_absolute_minute_boxscore', v_team_game_absolute_minute_
 // Custom
 router.use('/dashboard', dashboardRoutes);
 router.use('/dashboard_card', dashboardCardRoutes);
+router.use('/lineup-boxscore', lineupBoxscoreRoutes);
 
 export default router;

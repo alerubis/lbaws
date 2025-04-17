@@ -722,3 +722,26 @@ view v_player_game_minute_playing_boxscore {
   steals          BigInt   @default(0)
   assists         BigInt   @default(0)
 }
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_play_lineup_window {
+  play_id       Int     @id @default(0)
+  game_id       Int
+  team_id       Int
+  seconds_start Int?
+  seconds_end   Int?
+  player_ids    String? @db.Text
+  lineup_hash   String? @db.Text
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view v_team_game_lineup_minutes {
+  game_id        Int      @id
+  team_id        Int
+  player1_id     BigInt?  @db.UnsignedBigInt
+  player2_id     BigInt?  @db.UnsignedBigInt
+  player3_id     BigInt?  @db.UnsignedBigInt
+  player4_id     BigInt?  @db.UnsignedBigInt
+  player5_id     BigInt?  @db.UnsignedBigInt
+  minuti_giocati Decimal? @db.Decimal(37, 2)
+}

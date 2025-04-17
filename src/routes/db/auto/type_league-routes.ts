@@ -22,7 +22,7 @@ router.post('/read', wrapAsync(async (req: any, res: any) => {
             rows: rows,
             count: count,
         };
-    });
+    },{timeout: 10000});
     res.status(200).json(JSend.success(response));
 }));
 

@@ -564,6 +564,43 @@ LEFT JOIN dz_shot ds ON ds.id = sp.shot_id
 
 GROUP BY ptgp.player_id, ptgp.game_id, minute;
 
+CREATE VIEW v_play_lineup_window AS
+SELECT
+  p.id AS play_id,
+  p.game_id,
+  ptgp.team_id,
+  MIN(ptgp.seconds_start) AS seconds_start,
+  MAX(ptgp.seconds_end) AS seconds_end,
+  GROUP_CONCAT(DISTINCT ptgp.player_id ORDER BY ptgp.player_id) AS player_ids,
+  REPLACE(GROUP_CONCAT(DISTINCT ptgp.player_id ORDER BY ptgp.player_id), ',', '-') AS lineup_hash
+
+FROM player_team_game_play ptgp
+JOIN play p ON p.id = ptgp.play_id
+
+GROUP BY p.id, ptgp.team_id
+HAVING
+  LENGTH(player_ids) - LENGTH(REPLACE(player_ids, ',', '')) = 4;
+
+CREATE VIEW v_team_game_lineup_minutes AS
+SELECT
+  q.game_id,
+  q.team_id,
+  CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(q.lineup_hash, '-', 1), '-', -1) AS UNSIGNED) AS player1_id,
+  CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(q.lineup_hash, '-', 2), '-', -1) AS UNSIGNED) AS player2_id,
+  CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(q.lineup_hash, '-', 3), '-', -1) AS UNSIGNED) AS player3_id,
+  CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(q.lineup_hash, '-', 4), '-', -1) AS UNSIGNED) AS player4_id,
+  CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(q.lineup_hash, '-', 5), '-', -1) AS UNSIGNED) AS player5_id,
+  ROUND(SUM(q.seconds_end - q.seconds_start) / 60.0, 2) AS minuti_giocati
+
+FROM v_play_lineup_window q
+
+GROUP BY
+  q.game_id,
+  q.team_id,
+  q.lineup_hash
+
+ORDER BY q.game_id, q.team_id, minuti_giocati DESC;
+
 
 INSERT INTO player_team_game_play(player_id, team_id, game_id, play_id, seconds_start, seconds_end) VALUES(1592, 1658, 24666, 1681, 744, 752);
 INSERT INTO lba.sub_play (play_id, seconds_da_start, player_made_id, team_made_id, game_made_id, player_suffered_id, team_suffered_id, game_suffered_id, shot_id, turnover_id, foul_id, rebound_defensive_01, rebound_offensive_01, assist_01, blocks_01, time_out_01, x, y)VALUES(1681, 8, 6309, 1651, 24666, 1592, 1658, 24666, NULL, NULL, 4, '', '', '', '', '', 92, 53);
