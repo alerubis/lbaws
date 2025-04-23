@@ -9,21 +9,4 @@ const prisma = new PrismaClient();
 const router = express.Router();
 router.use(authenticateToken());
 
-router.post('/read', wrapAsync(async (req: any, res: any) => {
-    const response = await prisma.$transaction(async (tx) => {
-        const rows = await tx.card_settings_type.findMany({
-            skip: req.body?.skip,
-            take: req.body?.take || 1,
-            where: req.body?.where,
-            orderBy: req.body?.orderBy,
-        });
-        const count = await tx.card_settings_type.count({ where: req.body?.where });
-        return {
-            rows: rows,
-            count: count,
-        };
-    });
-    res.status(200).json(JSend.success(response));
-}));
-
 export default router;
