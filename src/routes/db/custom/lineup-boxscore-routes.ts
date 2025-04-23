@@ -73,7 +73,8 @@ router.post('/lineup', wrapAsync(async (req: any, res: any) => {
     select: {
       id: true,
       name: true,
-      surname: true
+      surname: true,
+      logo_url: true
     }
   });
 
@@ -88,11 +89,21 @@ router.post('/lineup', wrapAsync(async (req: any, res: any) => {
       Number(lineup.players[4])
     ];
 
-    const playerNames = playerIds.map(id => {
+    const playerInfos = playerIds.map(id => {
       const p = allPlayers.find(pl => pl.id === id);
-      return p ? `${p.name} ${p.surname}` : 'Unknown';
+      return p ? {
+        id: p.id,
+        name: p.name,
+        surname: p.surname,
+        logo_url: p.logo_url
+      } : {
+        id,
+        name: 'Unknown',
+        surname: '',
+        logo_url: ''
+      };
     });
-
+  
     const matchingSubPlays = allSubPlays.filter(sp => {
       const intervalsThisGame = allIntervals.filter(iv => iv.game_id === sp.game_id);
       return playerIds.every(pid => {
@@ -103,13 +114,13 @@ router.post('/lineup', wrapAsync(async (req: any, res: any) => {
         );
       });
     });
-
+  
     const stats = {
-      player1: playerNames[0],
-      player2: playerNames[1],
-      player3: playerNames[2],
-      player4: playerNames[3],
-      player5: playerNames[4],
+      player1: playerInfos[0],
+      player2: playerInfos[1],
+      player3: playerInfos[2],
+      player4: playerInfos[3],
+      player5: playerInfos[4],
       fouls_committed: 0,
       fouls_received: 0,
       points: 0,
