@@ -14,6 +14,7 @@ import typeLeagueTypeGameRoutes from './auto/type_league_type_game-routes';
 import playerTeamGameRoutes from './auto/player_team_game-routes';
 import teamRoutes from './auto/team-routes';
 import subPlayRoutes from './auto/sub_play-routes';
+import formulaRoutes from './auto/formula-routes';
 import v_player_game_minute_boxscore_base from './auto/v_player_game_minute_boxscore_base-routes';
 import v_player_game_minute_boxscore from './auto/v_player_game_minute_boxscore-routes';
 import v_player_game_absolute_minute_boxscore from './auto/v_player_game_absolute_minute_boxscore-routes';
@@ -30,6 +31,7 @@ import v_game from './auto/v_game-routes';
 // Custom
 import dashboardRoutes from './custom/dashboard-routes';
 import lineupBoxscoreRoutes from './custom/lineup-boxscore-routes';
+import viewRoutes from './custom/view-routes';
 import dashboardCardRoutes from './custom/dashboard_card-routes';
 import playerRoutes from './auto/player-routes';
 
@@ -47,6 +49,7 @@ router.use('/league', leagueRoutes);
 router.use('/referee', refereeRoutes);
 router.use('/team', teamRoutes);
 router.use('/sub_play', subPlayRoutes);
+router.use('/formula', formulaRoutes);
 router.use('/player', playerRoutes);
 router.use('/type_game', typeGameRoutes);
 router.use('/type_league_type_game', typeLeagueTypeGameRoutes);
@@ -69,5 +72,6 @@ router.use('/v_team_game_absolute_minute_boxscore', v_team_game_absolute_minute_
 router.use('/dashboard', dashboardRoutes);
 router.use('/dashboard_card', dashboardCardRoutes);
 router.use('/lineup-boxscore', lineupBoxscoreRoutes);
+router.use('/view-routes', viewRoutes);
 
 export default router;

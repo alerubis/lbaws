@@ -340,6 +340,12 @@ model card_type {
   dashboard   dashboard[]
 }
 
+model formula {
+  id      Int    @id @default(autoincrement())
+  name    String @db.VarChar(64)
+  formula String @db.VarChar(1024)
+}
+
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view v_player_game_absolute_minute_boxscore {
   player_id       Int      @id

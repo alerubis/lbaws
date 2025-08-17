@@ -43,7 +43,7 @@ async function generate(outputFolder: string) {
         classFileContent += `            rows: rows,\n`;
         classFileContent += `            count: count,\n`;
         classFileContent += `        };\n`;
-        classFileContent += `    },{timeout: 10000});\n`;
+        classFileContent += `    },{timeout: 15000});\n`;
         classFileContent += `    res.status(200).json(JSend.success(response));\n`;
         classFileContent += `}));\n`;
 

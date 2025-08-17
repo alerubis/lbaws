@@ -11,13 +11,13 @@ router.use(authenticateToken());
 
 router.post('/read', wrapAsync(async (req: any, res: any) => {
     const response = await prisma.$transaction(async (tx) => {
-        const rows = await tx.player_team.findMany({
+        const rows = await tx.formula.findMany({
             skip: req.body?.skip,
             take: req.body?.take || 1,
             where: req.body?.where,
             orderBy: req.body?.orderBy,
         });
-        const count = await tx.player_team.count({ where: req.body?.where });
+        const count = await tx.formula.count({ where: req.body?.where });
         return {
             rows: rows,
             count: count,

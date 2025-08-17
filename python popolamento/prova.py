@@ -49,7 +49,7 @@ linked_description_map = {
 }
 
 
-input_dir = "./json_matches"
+input_dir = "C:/Users/Alessandro Salvi/Documents/GitHub/lbaws/python popolamento/json_matches"
 json_files = sorted(glob.glob(os.path.join(input_dir, "*.json")))
 
 if not json_files:
@@ -60,7 +60,7 @@ output_dir = "./sql_matches"
 os.makedirs(output_dir, exist_ok=True)
 
 batch_size = 184
-play_id = 0
+play_id = 27807
 batch_file = None
 f = None
 

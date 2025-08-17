@@ -1,3 +1,4 @@
+import { Player } from './../../../scripts/data-import';
 import { dz_shot } from './../../../../node_modules/.prisma/client/index.d';
 import { PrismaClient } from '@prisma/client';
 import express from 'express';
@@ -6,6 +7,58 @@ import { JSend } from '../../../shared/jsend';
 
 const prisma = new PrismaClient();
 const router = express.Router();
+
+router.post('/first-lineup', wrapAsync(async (req: any, res: any) => {
+  const { team_id, game_ids } = req.body;
+  if (!team_id || !Array.isArray(game_ids) || game_ids.length === 0) {
+    return res.status(400).json(JSend.fail('Parametri mancanti o errati: team_id o game_ids'));
+  }
+
+  const allLineups = await prisma.$queryRawUnsafe<any[]>(`
+    SELECT team_id, game_id, lineup_hash, seconds_start, seconds_end
+    FROM v_play_lineup_window
+    WHERE team_id = ${team_id}
+      AND game_id IN (${game_ids.join(',')})
+  `);
+
+  const lineupMap = new Map<string, { players: number[], minuti_giocati: number }>();
+
+  for (const row of allLineups) {
+    const playerIds = row.lineup_hash.split('-').map((x: string) => Number(x)).sort((a: any, b: any) => a - b);
+    const normalized = playerIds.join('-');
+    const minutes = (row.seconds_end - row.seconds_start) / 60;
+
+    if (!lineupMap.has(normalized)) {
+      lineupMap.set(normalized, { players: playerIds, minuti_giocati: 0 });
+    }
+    lineupMap.get(normalized)!.minuti_giocati += minutes;
+  }
+
+  const topLineups = Array.from(lineupMap.values())
+    .sort((a, b) => b.minuti_giocati - a.minuti_giocati)
+    .slice(0, 1);
+
+  const allPlayers = await prisma.player.findMany({
+    where: {
+      id: {
+        in: topLineups.flatMap(l =>
+          [l.players[0], l.players[1], l.players[2], l.players[3], l.players[4]].map(Number)
+        )
+      }
+    },
+    select: {
+      id: true,
+      name: true,
+      surname: true,
+      logo_url: true
+    }
+  });
+  //const result = [topLineups[0].minuti_giocati, topLineups[0].players[0], topLineups[0].players[1], topLineups[0].players[2], topLineups[0].players[3], topLineups[0].players[4]]
+  //const result = allPlayers;
+  const result = [topLineups[0].players[0], topLineups[0].players[1], topLineups[0].players[2], topLineups[0].players[3], topLineups[0].players[4]]
+
+  res.status(200).json(JSend.success(result));
+}));
 
 router.post('/lineup', wrapAsync(async (req: any, res: any) => {
   const { team_id, game_ids } = req.body;
@@ -103,7 +156,7 @@ router.post('/lineup', wrapAsync(async (req: any, res: any) => {
         logo_url: ''
       };
     });
-  
+
     const matchingSubPlays = allSubPlays.filter(sp => {
       const intervalsThisGame = allIntervals.filter(iv => iv.game_id === sp.game_id);
       return playerIds.every(pid => {
@@ -114,7 +167,7 @@ router.post('/lineup', wrapAsync(async (req: any, res: any) => {
         );
       });
     });
-  
+
     const stats = {
       player1: playerInfos[0],
       player2: playerInfos[1],
@@ -275,9 +328,21 @@ router.post('/lineup-by-minute', wrapAsync(async (req: any, res: any) => {
     const second = minute * 60 + 1;
 
     // Trova lineup valide per A e B in questo minuto
-    const windowA = teamsMap[teamA_id]?.find(w => second >= w.seconds_start && second <= w.seconds_end);
-    const windowB = teamsMap[teamB_id]?.find(w => second >= w.seconds_start && second <= w.seconds_end);
-
+    //const windowA = teamsMap[teamA_id]?.find(w => second >= w.seconds_start && second <= w.seconds_end);
+    //const windowB = teamsMap[teamB_id]?.find(w => second >= w.seconds_start && second <= w.seconds_end);
+    let windowA = teamsMap[teamA_id]?.find(w => second >= w.seconds_start && second <= w.seconds_end);
+    if (!windowA && teamsMap[teamA_id]) {
+      windowA = teamsMap[teamA_id]
+        .filter(w => w.seconds_end < second)
+        .sort((a, b) => b.seconds_end - a.seconds_end)[0];
+    }
+    let windowB = teamsMap[teamB_id]?.find(w => second >= w.seconds_start && second <= w.seconds_end);
+    if (!windowB && teamsMap[teamB_id]) {
+      windowB = teamsMap[teamB_id]
+        .filter(w => w.seconds_end < second)
+        .sort((a, b) => b.seconds_end - a.seconds_end)[0];
+    }
+    
     const lineupA = windowA?.lineup || [];
     const lineupB = windowB?.lineup || [];
 

@@ -501,7 +501,9 @@ INSERT INTO `referee` (`name`, `surname`) VALUES
 ('Davide', 'Santi');
 
 
--- 1. Aggiunta colonne alla tabella principale
-ALTER TABLE player_team_game_play
-ADD COLUMN 
-ADD COLUMN 
+CREATE TABLE `formula` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL,
+  `formula` varchar(1024) NOT NULL,
+  PRIMARY KEY (`id`)
+);
