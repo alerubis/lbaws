@@ -34,7 +34,8 @@ export interface Player {
     player_role_id: number;
     player_role: string;
     team_name: string;
-    player_picture_key: string;
+    photo_picture_key: string;
+    cdn_url: string;
     team_logo_key: string;
 }
 
@@ -102,77 +103,77 @@ export interface Match {
 const prisma = new PrismaClient();
 
 async function importTeamsAndPlayersFromStats(token: string) {
-    for (let anno = new Date().getFullYear(); anno >= 2024; anno--) {
-        // 1. Recupero squadre della stagione
-        const teamResponse = await axios.get(`https://api-lba.procne.cloud/api/v1/teams?year=${anno}`, {
-            headers: { Authorization: `Bearer ${token}` },
-            responseType: "text",
-        });
+    // 1. Recupero squadre della stagione
+    const teamResponse = await axios.get(`https://www.legabasket.it/api/teams/get-teams?items=50`, {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: "text",
+    });
 
-        const rawTeamData = JSON.parse(teamResponse.data);
-        const teams: Team[] = rawTeamData.teams;
+    const rawTeamData = JSON.parse(teamResponse.data);
+    const teams: Team[] = rawTeamData.teams;
 
-        console.log(`${anno} - ${teams.length} squadre trovate`);
+    console.log(` - ${teams.length} squadre trovate`);
 
-        await prisma.team.createMany({
-            data: teams.map(team => ({
-                id: team.id,
-                name: team.name,
-                logo_url: `https://lba-media.s3.eu-south-1.amazonaws.com/${team.logo_key}`,
-            })),
-            skipDuplicates: true,
-        });
+    await prisma.team.createMany({
+        data: teams.map(team => ({
+            id: team.id,
+            name: team.name,
+            logo_url: `https://lba-media.s3.eu-south-1.amazonaws.com/${team.logo_key}`,
+        })),
+        skipDuplicates: true,
+    });
 
-        // 2. Per ogni squadra, recupero player stats
-        for (const team of teams) {
-            try {
-                const statsResponse = await axios.get(`https://api-lba.procne.cloud/api/v1/teams/${team.id}/players_stats?s=${anno}&st=sum`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    responseType: "text",
-                });
+    // 2. Per ogni squadra, recupero player stats
+    for (const team of teams) {
+        try {
+            const statsResponse = await axios.get(`https://www.legabasket.it/api/teams/get-team-roster?id=${team.id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+                responseType: "text",
+            });
 
-                const statsData = JSON.parse(statsResponse.data);
-                const playersStats: any[] = statsData.players;
+            const statsData = JSON.parse(statsResponse.data);
+            const playersStats: any[] = statsData.players;
 
-                console.log(`${anno} - ${team.name} - ${playersStats.length} giocatori trovati tramite stats`);
+            console.log(` - ${team.name} - ${playersStats.length} giocatori trovati`);
 
-                for (const stat of playersStats) {
-                    const playerId = stat.player_id;
+            for (const stat of playersStats) {
+                const playerId = stat.id;
 
-                    try {
-                        const playerResponse = await axios.get(`https://api-lba.procne.cloud/api/v1/players/${playerId}`, {
-                            headers: { Authorization: `Bearer ${token}` },
-                            responseType: "text",
-                        });
+                try {
+                    const playerResponse = await axios.get(`https://www.legabasket.it/api/players/get-player-by-id?id=${playerId}&stats=true`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                        responseType: "text",
+                    });
 
-                        const playerData = JSON.parse(playerResponse.data);
-                        const player: Player = playerData.player;
+                    const playerData = JSON.parse(playerResponse.data);
+                    const player: Player = playerData.player;
 
-                        await prisma.player.create({
-                            data: {
-                                id: player.id,
-                                name: player.name,
-                                surname: player.surname,
-                                logo_url: "https://www.legabasket.it/_next/static/media/AvatarPlaceholder.64b5f792.svg",
-                                height: player.height,
-                                year: player?.birth_date ? +player.birth_date.substring(0, 4) : null,
-                            },
-                        });
+                    await prisma.player.create({
+                        data: {
+                            id: player.id,
+                            name: player.name,
+                            surname: player.surname,
+                            logo_url: player.photo_picture_key
+                                ? `https://www.legabasket.it/_next/image?url=${encodeURIComponent(`${playerData.cdn_url}/${player.photo_picture_key}`)}&w=1920&q=75`
+                                : "https://www.legabasket.it/_next/static/media/AvatarPlaceholder.64b5f792.svg",
+                            height: player.height,
+                            year: player?.birth_date ? +player.birth_date.substring(0, 4) : null,
+                        },
+                    });
 
-                        console.log(`Inserito: ${player.name} ${player.surname}`);
+                    console.log(`Inserito: ${player.name} ${player.surname}`);
 
-                    } catch (err: any) {
-                        if (err.code === 'P2002') {
-                            console.log(`Già presente: ${stat.player_name} ${stat.player_surname}`);
-                        } else {
-                            console.warn(`Errore per il giocatore ${stat.player_name} ${stat.player_surname}:`, err.message);
-                        }
+                } catch (err: any) {
+                    if (err.code === 'P2002') {
+                        console.log(`Già presente: ${stat.player_name} ${stat.player_surname}`);
+                    } else {
+                        console.warn(`Errore per il giocatore ${stat.player_name} ${stat.player_surname}:`, err.message);
                     }
                 }
-
-            } catch (error: any) {
-                console.warn(`Errore stats squadra ${team.name} (${team.id}) - ${anno}:`, error.message);
             }
+
+        } catch (error: any) {
+            console.warn(`Errore stats squadra ${team.name} (${team.id}):`, error.message);
         }
     }
 }
@@ -181,28 +182,25 @@ async function importTeams(token: string) {
 
     // Ottengo le squadre da qui al 2000
     // Chiamando https://api-lba.procne.cloud/api/v1/teams senza anno ti da le 16 della stagione corrente
-    for (let anno = new Date().getFullYear(); anno >= 2000; anno--) {
-        const championshipsResponse = await axios.get('https://api-lba.procne.cloud/api/v1/teams?year=' + anno, {
-            headers: { Authorization: `Bearer ${token}` },
-            responseType: "text",
-        });
-        const rawData = JSON.parse(championshipsResponse.data);
-        const teams: Team[] = rawData.teams as Team[];
+    const championshipsResponse = await axios.get('https://www.legabasket.it/api/teams/get-teams?items=50', {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: "text",
+    });
+    const rawData = JSON.parse(championshipsResponse.data);
+    const teams: Team[] = rawData.teams as Team[];
 
-        // Inserisco in db le squadre
-        console.log(anno + ' - Inserisco in db le ' + teams.length + ' squadre...');
-        await prisma.team.createMany({
-            data: teams.map(team => {
-                return {
-                    id: team.id,
-                    name: team.name,
-                    logo_url: 'https://lba-media.s3.eu-south-1.amazonaws.com/' + team.logo_key,
-                };
-            }),
-            skipDuplicates: true,
-        });
-    }
-
+    // Inserisco in db le squadre
+    console.log(' - Inserisco in db le ' + teams.length + ' squadre...');
+    await prisma.team.createMany({
+        data: teams.map(team => {
+            return {
+                id: team.id,
+                name: team.name,
+                logo_url: 'https://lba-media.s3.eu-south-1.amazonaws.com/' + team.logo_key,
+            };
+        }),
+        skipDuplicates: true,
+    });
 }
 
 async function importAllPlayers(token: string) {
@@ -213,7 +211,7 @@ async function importAllPlayers(token: string) {
         page++;
 
         // Ottengo i giocatori
-        const response = await axios.get(`https://api-lba.procne.cloud/api/v1/players?full=1&ob=surname&sb=asc&page=${page}&items=25`, {
+        const response = await axios.get(`https://www.legabasket.it/api/players/get-players?full=1&ob=surname&sb=asc&page=${page}&items=25`, {
             headers: { Authorization: `Bearer ${token}` },
             responseType: "text",
         });

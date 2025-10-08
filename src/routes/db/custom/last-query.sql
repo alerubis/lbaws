@@ -146,7 +146,7 @@ JOIN (
       SELECT COUNT(DISTINCT ptgp.player_id)
       FROM player_team_game_play ptgp
       WHERE ptgp.play_id = sp.play_id
-        AND ptgp.player_id IN (3176,5150,6138,7015,7406)
+        AND ptgp.player_id IN (4268,7429,7431,9037,9038)
         AND ptgp.seconds_start <= (p.seconds_start + sp.seconds_da_start)
         AND (p.seconds_start + sp.seconds_da_start) <= ptgp.seconds_end
     ) = 5
@@ -179,5 +179,5 @@ GROUP BY
 
     ) AS filtered_boxscore
     WHERE 
-    game_id IN (25010) AND team_id = 1646
+    game_id IN (25015) AND team_id = 1714
   
