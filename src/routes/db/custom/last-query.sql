@@ -139,18 +139,9 @@ FROM
   player_team_game_play ptgp
 JOIN play p ON p.id = ptgp.play_id
 JOIN (
-    SELECT sp.*
-    FROM sub_play sp
-    JOIN play p ON p.id = sp.play_id
-    WHERE (
-      SELECT COUNT(DISTINCT ptgp.player_id)
-      FROM player_team_game_play ptgp
-      WHERE ptgp.play_id = sp.play_id
-        AND ptgp.player_id IN (4268,7429,7431,9037,9038)
-        AND ptgp.seconds_start <= (p.seconds_start + sp.seconds_da_start)
-        AND (p.seconds_start + sp.seconds_da_start) <= ptgp.seconds_end
-    ) = 5
-  ) sp 
+      SELECT sp.*
+      FROM sub_play sp
+      ) sp 
   ON sp.play_id = p.id
   AND (sp.player_made_id = ptgp.player_id OR sp.player_suffered_id = ptgp.player_id)
 LEFT JOIN dz_shot ds ON ds.id = sp.shot_id
@@ -179,5 +170,5 @@ GROUP BY
 
     ) AS filtered_boxscore
     WHERE 
-    game_id IN (25015) AND team_id = 1714
+    game_id IN (25015,25024,25031,25041,25048,25055,25067) AND team_id = 1720
   

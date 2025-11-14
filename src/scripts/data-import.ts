@@ -178,6 +178,75 @@ async function importTeamsAndPlayersFromStats(token: string) {
     }
 }
 
+async function updatePicture(token: string) {
+    // 1. Recupero squadre della stagione
+    const teamResponse = await axios.get(`https://www.legabasket.it/api/teams/get-teams?items=50`, {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: "text",
+    });
+
+    const rawTeamData = JSON.parse(teamResponse.data);
+    const teams: Team[] = rawTeamData.teams;
+
+    console.log(` - ${teams.length} squadre trovate`);
+
+    // 2. Per ogni squadra, recupero player stats
+    for (const team of teams) {
+        try {
+            const statsResponse = await axios.get(`https://www.legabasket.it/api/teams/get-team-roster?id=${team.id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+                responseType: "text",
+            });
+
+            const statsData = JSON.parse(statsResponse.data);
+            const playersStats: any[] = statsData.players;
+
+            console.log(` - ${team.name} - ${playersStats.length} giocatori trovati`);
+
+            for (const stat of playersStats) {
+                const playerId = stat.id;
+
+                try {
+                    // recupero dati completi giocatore
+                    const playerResponse = await axios.get(
+                        `https://www.legabasket.it/api/players/get-player-by-id?id=${playerId}&stats=true`,
+                        {
+                            headers: { Authorization: `Bearer ${token}` },
+                            responseType: "text",
+                        }
+                    );
+
+                    const playerData = JSON.parse(playerResponse.data);
+                    const player: Player = playerData.player;
+
+                    // costruzione URL foto
+                    const photoUrl = player.photo_picture_key
+                        ? `https://www.legabasket.it/_next/image?url=${encodeURIComponent(`${playerData.cdn_url}/${player.photo_picture_key}`)}&w=1920&q=75`
+                        : "https://www.legabasket.it/_next/static/media/AvatarPlaceholder.64b5f792.svg";
+
+                    // aggiorno SOLO se il giocatore esiste
+                    const updated = await prisma.player.updateMany({
+                        where: { id: player.id },
+                        data: { logo_url: photoUrl },
+                    });
+
+                    if (updated.count > 0) {
+                        console.log(`Aggiornato logo: ${player.name} ${player.surname}`);
+                    } else {
+                        console.log(`Non esiste in DB, salto: ${player.name} ${player.surname}`);
+                    }
+
+                } catch (err: any) {
+                    console.warn(`Errore durante update per il giocatore ${stat.player_name} ${stat.player_surname}:`, err.message);
+                }
+            }
+
+        } catch (error: any) {
+            console.warn(`Errore stats squadra ${team.name} (${team.id}):`, error.message);
+        }
+    }
+}
+
 async function importTeams(token: string) {
 
     // Ottengo le squadre da qui al 2000
@@ -277,75 +346,30 @@ async function importPlayers(token: string) {
 
 async function importGames(token: string) {
 
-    for (let anno = new Date().getFullYear(); anno >= 2023; anno--) {
+    for (let partita = 25054; partita <= 25069; partita++) {
 
-        // Ottengo le competizioni
-        const reponse = await axios.get('https://api-lba.procne.cloud/api/v1/championships?s=' + anno + '&items=1000', {
-            headers: { Authorization: `Bearer ${token}` },
-            responseType: "text",
-        });
-        const rawData = JSON.parse(reponse.data);
-        const competitions: Competition[] = rawData.competitions as Competition[];
-
-        for (const competition of competitions) {
-
-            // Ottengo il calendario
-            const reponse = await axios.get('https://api-lba.procne.cloud/api/v1/championships/' + competition.id + '/calendar', {
+        try {
+            const response = await axios.get(`https://www.legabasket.it/api/championships/get-championships-matches-play-by-play?id=${partita}&info=true&sort=desc`, {
                 headers: { Authorization: `Bearer ${token}` },
-                responseType: "text",
+                responseType: "json"
             });
-            const rawData = JSON.parse(reponse.data);
-            if (rawData.filters?.days) {
-                const calendarDays: CalendarDay[] = rawData.filters.days as CalendarDay[];
 
-                // Ottengo l'elenco delle partite di quella giornata
-                for (const calendarDay of calendarDays) {
+            const playByPlayData = response.data;
 
-                    // Ottengo il calendario
-                    const reponse = await axios.get('https://api-lba.procne.cloud/api/v1/championships/' + competition.id + '/calendar?d=' + calendarDay.code, {
-                        headers: { Authorization: `Bearer ${token}` },
-                        responseType: "text",
-                    });
-                    const rawData = JSON.parse(reponse.data);
-                    if (rawData.filters?.days) {
-                        const matches: Match[] = rawData.matches as Match[];
+            const fs = require('fs');
+            const path = require('path');
 
-                        if (matches && _.isArray(matches)) {
-                            for (const match of matches) {
-                                const matchId = match.id;
-
-                                try {
-                                    const response = await axios.get(`https://api-lba.procne.cloud/api/v1/championships_matches/${matchId}/play_by_play?info=1&sort=desc`, {
-                                        headers: { Authorization: `Bearer ${token}` },
-                                        responseType: "json"
-                                    });
-
-                                    const playByPlayData = response.data;
-
-                                    const fs = require('fs');
-                                    const path = require('path');
-
-                                    const outputDir = './playbyplay_data';
-                                    if (!fs.existsSync(outputDir)) {
-                                        fs.mkdirSync(outputDir);
-                                    }
-
-                                    const filePath = path.join(outputDir, `playbyplay_${matchId}.json`);
-                                    fs.writeFileSync(filePath, JSON.stringify(playByPlayData, null, 2));
-
-                                    console.log(`✅ Salvato play-by-play per match ${matchId}`);
-                                } catch (err: any) {
-                                    console.error(`❌ Errore nel play-by-play per match ${matchId}:`, err.message);
-                                }
-
-                                console.log(`Anno ${anno} - Competizione ${competition.name} - Giornata ${calendarDay.name} - Partita ${match.h_team_name} vs ${match.v_team_name} - Finisce ${match.home_final_score} - ${match.visitor_final_score}`);
-                            }
-                        }
-                    }
-
-                }
+            const outputDir = './playbyplay_data';
+            if (!fs.existsSync(outputDir)) {
+                fs.mkdirSync(outputDir);
             }
 
+            const filePath = path.join(outputDir, `playbyplay_${partita}.json`);
+            fs.writeFileSync(filePath, JSON.stringify(playByPlayData, null, 2));
+
+            console.log(`✅ Salvato play-by-play per match ${partita}`);
+        } catch (err: any) {
+            console.error(`❌ Errore nel play-by-play per match ${partita}:`, err.message);
         }
 
     }
@@ -523,6 +547,7 @@ inquirer
             choices: [
                 'Squadre',
                 'Giocatori',
+                'Picture',
                 'Partite',
                 'Esegui query da file'
             ]
@@ -532,7 +557,7 @@ inquirer
         const cosa = answers.cosa;
 
         // Le prime tre opzioni richiedono il token
-        if (['Squadre', 'Giocatori', 'Partite'].includes(cosa)) {
+        if (['Squadre', 'Giocatori', 'Partite', 'Picture'].includes(cosa)) {
             console.log('Ottengo il token...');
             const authResponse = await axios.get('https://www.legabasket.it/api/oauth', {
                 headers: {},
@@ -547,6 +572,9 @@ inquirer
                     break;
                 case 'Giocatori':
                     await importTeamsAndPlayersFromStats(token);
+                    break;
+                case 'Picture':
+                    await updatePicture(token);
                     break;
                 case 'Partite':
                     await importGames(token);
