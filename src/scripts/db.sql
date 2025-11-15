@@ -507,3 +507,11 @@ CREATE TABLE `formula` (
   `formula` varchar(1024) NOT NULL,
   PRIMARY KEY (`id`)
 );
+
+CREATE TABLE stat (
+  `stat_id` varchar(64) NOT NULL,
+  `min` int NOT NULL,
+  `ave` int NOT NULL,
+  `max` int NOT NULL,
+  PRIMARY KEY (`stat_id`)
+);

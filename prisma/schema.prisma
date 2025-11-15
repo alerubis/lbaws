@@ -1,7 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
-  binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
   previewFeatures = ["views"]
+  binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -345,6 +345,14 @@ model formula {
   id      Int    @id @default(autoincrement())
   name    String @db.VarChar(64)
   formula String @db.VarChar(1024)
+}
+
+model stat {
+  stat_id String @id @db.VarChar(64)
+  nome    String @db.VarChar(64)
+  min     Int
+  ave     Int
+  max     Int
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.

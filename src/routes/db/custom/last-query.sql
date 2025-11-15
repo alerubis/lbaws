@@ -170,5 +170,5 @@ GROUP BY
 
     ) AS filtered_boxscore
     WHERE 
-    game_id IN (25015,25024,25031,25041,25048,25055,25067) AND team_id = 1720
+    game_id IN (25067) AND team_id = 1723
   
