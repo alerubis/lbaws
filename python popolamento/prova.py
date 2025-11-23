@@ -60,7 +60,7 @@ output_dir = "./sql_matches"
 os.makedirs(output_dir, exist_ok=True)
 
 batch_size = 184
-play_id = 33848
+play_id = 37474
 batch_file = None
 f = None
 

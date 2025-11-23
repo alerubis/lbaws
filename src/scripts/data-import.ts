@@ -346,7 +346,7 @@ async function importPlayers(token: string) {
 
 async function importGames(token: string) {
 
-    for (let partita = 25054; partita <= 25069; partita++) {
+    for (let partita = 25078; partita <= 25085; partita++) {
 
         try {
             const response = await axios.get(`https://www.legabasket.it/api/championships/get-championships-matches-play-by-play?id=${partita}&info=true&sort=desc`, {
