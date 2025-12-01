@@ -175,24 +175,43 @@ router.post('/lineup', wrapAsync(async (req: any, res: any) => {
       player4: playerInfos[3],
       player5: playerInfos[4],
       fouls_committed: 0,
+      fouls_committedo: 0,
       fouls_received: 0,
+      fouls_receivedo: 0,
       points: 0,
+      pointso: 0,
       made_2pt: 0,
+      made_2pto: 0,
       missed_2pt: 0,
+      missed_2pto: 0,
       pct_2pt: 0,
+      pct_2pto: 0,
       made_3pt: 0,
+      made_3pto: 0,
       missed_3pt: 0,
+      missed_3pto: 0,
       pct_3pt: 0,
+      pct_3pto: 0,
       made_ft: 0,
+      made_fto: 0,
       missed_ft: 0,
+      missed_fto: 0,
       pct_ft: 0,
+      pct_fto: 0,
       off_reb: 0,
+      off_rebo: 0,
       def_reb: 0,
+      def_rebo: 0,
       blocks_made: 0,
+      blocks_madeo: 0,
       blocks_suffered: 0,
+      blocks_sufferedo: 0,
       turnovers: 0,
+      turnoverso: 0,
       steals: 0,
+      stealso: 0,
       assists: 0,
+      assistso: 0,
       minutes_played: lineup.minuti_giocati
     };
 
@@ -200,11 +219,19 @@ router.post('/lineup', wrapAsync(async (req: any, res: any) => {
       const shot = dzShots.find(ds => ds.id === sp.shot_id);
 
       // Fouls
-      if (sp.foul_id && playerIds.includes(Number(sp.player_made_id))) {
-        stats.fouls_committed++;
-      }
-      if (sp.foul_id && playerIds.includes(Number(sp.player_suffered_id))) {
-        stats.fouls_received++;
+      if (sp.foul_id) {
+        if (playerIds.includes(Number(sp.player_made_id))) {
+          stats.fouls_committed++;
+        }
+        else if (sp.team_made_id !== team_id){
+          stats.fouls_committedo++;
+        }
+        if (playerIds.includes(Number(sp.player_suffered_id))) {
+          stats.fouls_received++;
+        }
+        else if (sp.team_made_id !== team_id){
+          stats.fouls_receivedo++;
+        }
       }
 
       // Points and shots
@@ -221,6 +248,19 @@ router.post('/lineup', wrapAsync(async (req: any, res: any) => {
           else if (shot.point === 1) stats.missed_ft++;
         }
       }
+      else if (shot && sp.team_made_id !== team_id) {
+        if (shot.made_01 === '1') {
+          stats.pointso += shot.point;
+
+          if (shot.point === 2) stats.made_2pto++;
+          else if (shot.point === 3) stats.made_3pto++;
+          else if (shot.point === 1) stats.made_fto++;
+        } else {
+          if (shot.point === 2) stats.missed_2pto++;
+          else if (shot.point === 3) stats.missed_3pto++;
+          else if (shot.point === 1) stats.missed_fto++;
+        }
+      }
 
       // Rebounds
       if (sp.rebound_offensive_01 === '1' && playerIds.includes(Number(sp.player_made_id))) {
@@ -228,6 +268,13 @@ router.post('/lineup', wrapAsync(async (req: any, res: any) => {
       }
       if (sp.rebound_defensive_01 === '1' && playerIds.includes(Number(sp.player_made_id))) {
         stats.def_reb++;
+      }
+
+      if (sp.rebound_offensive_01 === '1' && sp.team_made_id !== team_id) {
+        stats.off_rebo++;
+      }
+      if (sp.rebound_defensive_01 === '1' && sp.team_made_id !== team_id) {
+        stats.def_rebo++;
       }
 
       // Blocks
@@ -238,6 +285,12 @@ router.post('/lineup', wrapAsync(async (req: any, res: any) => {
         stats.blocks_suffered++;
       }
 
+      if (sp.blocks_01 === '1' && sp.team_made_id !== team_id) {
+        stats.blocks_madeo++;
+      }
+      if (sp.blocks_01 === '1' && sp.team_suffered_id !== team_id) {
+        stats.blocks_sufferedo++;
+      }
       // Turnovers and steals
       if (sp.turnover_id && playerIds.includes(Number(sp.player_made_id))) {
         stats.turnovers++;
@@ -246,9 +299,19 @@ router.post('/lineup', wrapAsync(async (req: any, res: any) => {
         stats.steals++;
       }
 
+      if (sp.turnover_id && sp.team_made_id !== team_id) {
+        stats.turnoverso++;
+      }
+      if (sp.turnover_id && sp.team_suffered_id !== team_id) {
+        stats.stealso++;
+      }
+
       // Assists
       if (sp.assist_01 === '1' && playerIds.includes(Number(sp.player_made_id))) {
         stats.assists++;
+      }
+      else if (sp.assist_01 === '1' && sp.team_made_id !== team_id) {
+        stats.assistso++;
       }
     }
 
@@ -260,6 +323,14 @@ router.post('/lineup', wrapAsync(async (req: any, res: any) => {
     stats.pct_2pt = total2pt > 0 ? Math.round((stats.made_2pt * 100) / total2pt * 10) / 10 : 0;
     stats.pct_3pt = total3pt > 0 ? Math.round((stats.made_3pt * 100) / total3pt * 10) / 10 : 0;
     stats.pct_ft = totalFt > 0 ? Math.round((stats.made_ft * 100) / totalFt * 10) / 10 : 0;
+
+    const total2pto = stats.made_2pto + stats.missed_2pto;
+    const total3pto = stats.made_3pto + stats.missed_3pto;
+    const totalFto = stats.made_fto + stats.missed_fto;
+
+    stats.pct_2pto = total2pto > 0 ? Math.round((stats.made_2pto * 100) / total2pto * 10) / 10 : 0;
+    stats.pct_3pto = total3pto > 0 ? Math.round((stats.made_3pto * 100) / total3pto * 10) / 10 : 0;
+    stats.pct_fto = totalFto > 0 ? Math.round((stats.made_fto * 100) / totalFto * 10) / 10 : 0;
 
     result.push(stats);
   }
